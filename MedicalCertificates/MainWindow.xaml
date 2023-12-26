@@ -1,0 +1,97 @@
+﻿<Window x:Class="MedicalCertificates.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MedicalCertificates"
+        mc:Ignorable="d"
+        Title="Bank Application"  Height="720" Width="1280" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded">
+    <Grid Background="#ebf0f3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0">
+            <Grid Background="#131f3b" MouseDown="Grid_MouseDown">
+                <Label Foreground="#ebf0f3" HorizontalAlignment="Center"
+                   FontSize="16"
+                   Margin="20 5">MEDICAL CERTIFICATES</Label>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="HideButton" Style="{StaticResource MinimazeButton}" VerticalContentAlignment="Center" Click="HideButton_Click">-</Button>
+                    <Button x:Name="ExitButton" Style="{StaticResource ExitButton}" VerticalContentAlignment="Center" Click="ExitButton_Click">x</Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Background="#223563">
+            <StackPanel Grid.Column="0" Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top">Импорт</Button>
+                <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0">Обновить</Button>
+                <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Создать</Button>
+                <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Изменить</Button>
+                <Button Name="DeleteButton" Style="{StaticResource AltButton}" VerticalAlignment="Top" Margin="0 0 20 0">Удалить</Button>
+                <Button Name="ReportButton" Style="{StaticResource PrimaryButton}" Click="ReportMenu_Click" VerticalAlignment="Top">Отчеты
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по отделениям"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделения"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <Button Name="ExportButton" Style="{StaticResource ExportButton}" VerticalAlignment="Top">PDF</Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Width="300"
+                    BorderThickness="0 0 1 0"
+                    BorderBrush="#7F081724">
+                <ScrollViewer Margin="15 25" VerticalScrollBarVisibility="Auto">
+                    <TreeView/>
+                </ScrollViewer>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Name="TableLabel" Grid.Row="0" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Width="320" Margin="40 10" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
+
+                <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№" Binding="{Binding Full_name}" Width="0.15*" FontSize="14"/>
+                        <DataGridTextColumn Header="ФИО учащегося" Binding="{Binding Full_name}" Width="0.8*" FontSize="14"/>
+                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birth_date}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа здоровья" Binding="{Binding Health_group}" Width="0.6*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding PE_group}" Width="0.6*" FontSize="14"/>
+                        <DataGridTextColumn Header="Справка годна" Binding="{Binding Valid_date}" Width="0.5*" FontSize="14"/>
+                        <DataGridTemplateColumn Width="0.4*" Header="Примечание">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource NoteButton}" Name="ShowNote">Подробнее..</Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}" />
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+
+            
+            
+        </Grid>
+    </Grid>
+</Window>
