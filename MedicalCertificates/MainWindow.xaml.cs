@@ -1,4 +1,5 @@
-﻿using MedicalCertificates.Services;
+﻿using MedicalCertificates.Models;
+using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
 using System;
 using System.Collections.Generic;
@@ -64,8 +65,6 @@ namespace MedicalCertificates
 
         private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
         {
-            var alert = new AcceptAlert("fds", "fdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfds", AlertType.Info);
-            alert.ShowDialog();
             DataGridSorting.HandleDataGridSorting((DataGrid)sender, e);
         }
     }
