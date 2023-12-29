@@ -64,8 +64,8 @@
             </Style>
 
             <Style x:Key="PrimaryMenuItem" TargetType="MenuItem">
-                <Setter Property="Background" Value="#182e61"/>
-                <Setter Property="Foreground" Value="#ebf0f3"/>
+                <Setter Property="Background" Value="#ebf0f3"/>
+                <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="Padding" Value="15 10"/>
                 <Setter Property="FontSize" Value="16"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -87,10 +87,12 @@
                 </Setter>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#1d3775"/>
+                        <Setter Property="Background" Value="#FF596C98"/>
+                        <Setter Property="Foreground" Value="White"/>
                     </Trigger>
                     <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="#112147"/>
+                        <Setter Property="Background" Value="#1d3775"/>
+                        <Setter Property="Foreground" Value="White"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -214,7 +216,7 @@
             </Style>
 
             <Style x:Key="DataGridStyle" TargetType="DataGrid">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="#ebf0f3" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="CanUserResizeColumns" Value="False" />
                 <Setter Property="AutoGenerateColumns" Value="False" />
@@ -225,17 +227,17 @@
                 <Setter Property="ColumnHeaderStyle">
                     <Setter.Value>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#173b57" />
+                            <Setter Property="Background" Value="#223563" />
                             <Setter Property="Foreground" Value="White" />
-                            <Setter Property="Padding" Value="14 8"/>
+                            <Setter Property="Padding" Value="6 8"/>
                             <Setter Property="BorderThickness" Value="1"/>
                             <Setter Property="BorderBrush" Value="#091a26"/>
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#3e6b89" />
+                                    <Setter Property="Background" Value="#314c8c" />
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#1d3c4f" />
+                                    <Setter Property="Background" Value="#21386e" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -249,7 +251,7 @@
                 <Setter Property="FontSize" Value="18"/>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#d7eefc" />
+                        <Setter Property="Background" Value="#FFD4EAFF" />
                         <Setter Property="Foreground" Value="#131f3b" />
                     </Trigger>
                 </Style.Triggers>

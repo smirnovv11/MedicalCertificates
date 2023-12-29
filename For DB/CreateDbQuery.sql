@@ -170,9 +170,9 @@ INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест
 INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (1, 1, '23/24')
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-341', 1)
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-342', 1)
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, 'aboba', N'Аваы', N'аваыв', '31-12-2004')
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'виктор', N'ав', N'ав', '31-12-2004')
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'гор', N'Аваы', N'аваыв', '12-12-2004')
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Виктор', N'Веревкин', N'Васильевич', '31-12-2004')
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Евгений', N'Анокин', N'Андреевич', '12-12-2004')
 UPDATE Students_table SET GroupId = 2 WHERE StudentId = 2
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (1, 3, 3, '12-12-2022', '12-12-2023')
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (1, 3, 3, '12-12-2021', '12-12-2022')
@@ -194,6 +194,19 @@ SELECT s.StudentId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.Healt
 	JOIN Certificates_table as c ON c.StudentId = s.StudentId
 	JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 	JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+GO
+
+DROP VIEW IF EXISTS DataGrid_view
+GO
+CREATE VIEW DataGrid_view
+AS
+SELECT FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 GO
 
 SELECT * FROM StudentsCertificates_view WHERE StudentId = 1
@@ -231,6 +244,7 @@ BEGIN
 	SELECT FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
+	ORDER BY SecondName ASC
 END
 GO
 

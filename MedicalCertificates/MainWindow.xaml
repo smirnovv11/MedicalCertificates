@@ -12,6 +12,7 @@
     
     <Window.Resources>
         <services:NameConverter x:Key="NameConverter"/>
+        <services:FullNameConverter x:Key="FullNameConverter"/>
         <services:AppendText x:Key="AppendText"/>
     </Window.Resources>
 
@@ -38,12 +39,23 @@
             <StackPanel Grid.Column="0" Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top">Импорт</Button>
                 <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0" Click="UpdateButton_Click">Обновить</Button>
-                <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Создать</Button>
-                <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Изменить</Button>
+                <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Click="ReportMenu_Click">
+                    Добавить
+                    <Button.ContextMenu>
+                        <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
+                            <MenuItem Name="DepartmentAddition" Style="{StaticResource PrimaryMenuItem}" Header="Добавить отделение" Padding="15 10 110 10"/>
+                            <MenuItem Name="CourseAddition" Style="{StaticResource PrimaryMenuItem}" Header="Добавить курс"  Padding="15 10 110 10"/>
+                            <MenuItem Name="GroupAddition" Style="{StaticResource PrimaryMenuItem}" Header="Добавить группу"  Padding="15 10 110 10"/>
+                            <MenuItem Name="StudentAddition" Style="{StaticResource PrimaryMenuItem}" Header="Добавить учащегося"  Padding="15 10 110 10" Click="StudentAddition_Click" />
+                            <MenuItem Name="CertificateAddition" Style="{StaticResource PrimaryMenuItem}" Header="Добавить справку"  Padding="15 10 110 10"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                    <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Изменить</Button>
                 <Button Name="DeleteButton" Style="{StaticResource AltButton}" VerticalAlignment="Top" Margin="0 0 20 0">Удалить</Button>
                 <Button Name="ReportButton" Style="{StaticResource PrimaryButton}" Click="ReportMenu_Click" VerticalAlignment="Top">Отчеты
                     <Button.ContextMenu>
-                        <ContextMenu>
+                        <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по отделениям"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам"/>
@@ -100,18 +112,26 @@
                 </Grid.RowDefinitions>
                 <TextBlock Name="TableLabel" Grid.Row="0" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Width="320" Margin="40 10" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
 
-                <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting">
+                <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting" CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" Width="0.15*" FontSize="14"/>
-                        <DataGridTextColumn Header="ФИО учащегося" Binding="{Binding Full_name}" Width="0.8*" FontSize="14"/>
-                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birth_date}" Width="0.5*" FontSize="14"/>
-                        <DataGridTextColumn Header="Группа здоровья" Binding="{Binding Health_group}" Width="0.6*" FontSize="14"/>
-                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding PE_group}" Width="0.6*" FontSize="14"/>
-                        <DataGridTextColumn Header="Справка годна" Binding="{Binding Valid_date}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="№" Width="0.13*" FontSize="14"/>
+                        <DataGridTextColumn Header="ФИО учащегося" Width="0.8*" FontSize="14">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource FullNameConverter}">
+                                    <Binding Path="SecondName" />
+                                    <Binding Path="FirstName" />
+                                    <Binding Path="ThirdName" />
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа здоровья" Binding="{Binding HealthGroup}" Width="0.6*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.6*" FontSize="14"/>
+                        <DataGridTextColumn Header="Справка годна" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}" Width="0.5*" FontSize="14"/>
                         <DataGridTemplateColumn Width="0.4*" Header="Примечание">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource NoteButton}" Name="ShowNote">Подробнее..</Button>
+                                    <Button Style="{StaticResource NoteButton}" Name="ShowNote" Click="ShowNote_Click">Подробнее</Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

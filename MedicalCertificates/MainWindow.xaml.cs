@@ -1,11 +1,15 @@
 ﻿using MedicalCertificates.Models;
 using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
+using MedicalCertificates.Views.Create;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,7 +38,13 @@ namespace MedicalCertificates
                 db = new MedicalCertificatesDbContext();
                 InitializeComponent();
 
-                UpdateData();
+                CultureInfo cultureInfo = new CultureInfo("ru-RU");
+                DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+                dateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+                cultureInfo.DateTimeFormat = dateTimeFormat;
+                Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+                UpdateAllDbData();
             }
             catch (Exception ex)
             {
@@ -78,10 +88,10 @@ namespace MedicalCertificates
 
         private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
         {
-            DataGridSorting.HandleDataGridSorting((DataGrid)sender, e);
+            //DataGridSorting.HandleDataGridSorting((DataGrid)sender, e);
         }
 
-        private void UpdateData()
+        private void UpdateAllDbData()
         {
             TreeMenu.ItemsSource = db.DepartmentsTables
                           .Include(d => d.CoursesTables)
@@ -89,13 +99,40 @@ namespace MedicalCertificates
                           .ThenInclude(g => g.StudentsTables)
                           .ToList();
 
-            var res = db.StudentsTables.FromSqlRaw($"ReceiveStudentsGroup_procedure {"23/23"}, {1}").ToList();
-            MessageBox.Show(res[0].FirstName);
+            var year = new SqlParameter("@Year", "23/24");
+            var group = new SqlParameter("@GroupId", "1");
+
+            var res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @Year, @GroupId", year, group).ToList();
+            dataGrid.ItemsSource = res;
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateData();
+            UpdateAllDbData();
         }
+
+        private void ShowNote_Click(object sender, RoutedEventArgs e)
+        {
+            var text = (dataGrid.SelectedItem as DataGridView).Note;
+
+            if (text == null || text.Length <= 0)
+                text = "Примечание отсутствует.";
+
+            var alert = new Alert("Примечание", text);
+            alert.ShowDialog();
+        }
+
+
+        #region Addition
+
+        private void StudentAddition_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddStudent();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        #endregion
+
     }
 }

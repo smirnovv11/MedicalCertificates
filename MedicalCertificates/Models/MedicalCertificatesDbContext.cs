@@ -18,6 +18,7 @@ namespace MedicalCertificates.Models
 
         public virtual DbSet<CertificatesTable> CertificatesTables { get; set; } = null!;
         public virtual DbSet<CoursesTable> CoursesTables { get; set; } = null!;
+        public virtual DbSet<DataGridView> DataGridViews { get; set; } = null!;
         public virtual DbSet<DepartmentsTable> DepartmentsTables { get; set; } = null!;
         public virtual DbSet<GroupsTable> GroupsTables { get; set; } = null!;
         public virtual DbSet<HealthGroupTable> HealthGroupTables { get; set; } = null!;
@@ -81,6 +82,31 @@ namespace MedicalCertificates.Models
                     .WithMany(p => p.CoursesTables)
                     .HasForeignKey(d => d.DepartmentId)
                     .HasConstraintName("FK_Department");
+            });
+
+            modelBuilder.Entity<DataGridView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("DataGrid_view");
+
+                entity.Property(e => e.BirthDate).HasColumnType("date");
+
+                entity.Property(e => e.FirstName).HasMaxLength(20);
+
+                entity.Property(e => e.HealthGroup).HasMaxLength(20);
+
+                entity.Property(e => e.IssueDate).HasColumnType("date");
+
+                entity.Property(e => e.Pegroup)
+                    .HasMaxLength(20)
+                    .HasColumnName("PEGroup");
+
+                entity.Property(e => e.SecondName).HasMaxLength(20);
+
+                entity.Property(e => e.ThirdName).HasMaxLength(20);
+
+                entity.Property(e => e.ValidDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<DepartmentsTable>(entity =>
