@@ -1,6 +1,7 @@
 ﻿using MedicalCertificates.Models;
 using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +25,22 @@ namespace MedicalCertificates
     /// </summary>
     public partial class MainWindow : Window
     {
+        MedicalCertificatesDbContext db;
+
         public MainWindow()
         {
-            InitializeComponent();
+            try
+            {
+                db = new MedicalCertificatesDbContext();
+                InitializeComponent();
+
+                UpdateData();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -36,7 +50,6 @@ namespace MedicalCertificates
             this.Left = 0;
             this.Width = SystemParameters.PrimaryScreenWidth;
             this.Height = SystemParameters.PrimaryScreenHeight - taskbarHeight;
-
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -66,6 +79,23 @@ namespace MedicalCertificates
         private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
         {
             DataGridSorting.HandleDataGridSorting((DataGrid)sender, e);
+        }
+
+        private void UpdateData()
+        {
+            TreeMenu.ItemsSource = db.DepartmentsTables
+                          .Include(d => d.CoursesTables)
+                          .ThenInclude(c => c.GroupsTables)
+                          .ThenInclude(g => g.StudentsTables)
+                          .ToList();
+
+            var res = db.StudentsTables.FromSqlRaw($"ReceiveStudentsGroup_procedure {"23/23"}, {1}").ToList();
+            MessageBox.Show(res[0].FirstName);
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateData();
         }
     }
 }

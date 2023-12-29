@@ -4,8 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates"
+        xmlns:pf="clr-namespace:System.Windows;assembly=PresentationFramework"
+        xmlns:models="clr-namespace:MedicalCertificates.Models"
+        xmlns:services="clr-namespace:MedicalCertificates.Services"
         mc:Ignorable="d"
         Title="Bank Application"  Height="720" Width="1280" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded">
+    
+    <Window.Resources>
+        <services:NameConverter x:Key="NameConverter"/>
+        <services:AppendText x:Key="AppendText"/>
+    </Window.Resources>
+
     <Grid Background="#ebf0f3">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -28,7 +37,7 @@
         <Grid Grid.Row="1" Background="#223563">
             <StackPanel Grid.Column="0" Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top">Импорт</Button>
-                <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0">Обновить</Button>
+                <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0" Click="UpdateButton_Click">Обновить</Button>
                 <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Создать</Button>
                 <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Изменить</Button>
                 <Button Name="DeleteButton" Style="{StaticResource AltButton}" VerticalAlignment="Top" Margin="0 0 20 0">Удалить</Button>
@@ -57,7 +66,30 @@
                     BorderThickness="0 0 1 0"
                     BorderBrush="#7F081724">
                 <ScrollViewer Margin="15 25" VerticalScrollBarVisibility="Auto">
-                    <TreeView/>
+                    <TreeView Name="TreeMenu" FontSize="14" Padding="0 10">
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type models:DepartmentsTable}" ItemsSource="{Binding CoursesTables}">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type models:CoursesTable}" ItemsSource="{Binding GroupsTables}">
+                                <TextBlock Text="{Binding Number, Converter={StaticResource AppendText}, ConverterParameter='-курс'}" FontWeight="Bold"/>
+                            </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type models:GroupsTable}" ItemsSource="{Binding StudentsTables}">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type models:StudentsTable}" ItemsSource="{Binding CertificatesTables}">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource NameConverter}">
+                                            <Binding Path="SecondName" />
+                                            <Binding Path="FirstName" />
+                                            <Binding Path="ThirdName" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
                 </ScrollViewer>
             </Border>
 
@@ -70,7 +102,7 @@
 
                 <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" Binding="{Binding Full_name}" Width="0.15*" FontSize="14"/>
+                        <DataGridTextColumn Header="№" Width="0.15*" FontSize="14"/>
                         <DataGridTextColumn Header="ФИО учащегося" Binding="{Binding Full_name}" Width="0.8*" FontSize="14"/>
                         <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birth_date}" Width="0.5*" FontSize="14"/>
                         <DataGridTextColumn Header="Группа здоровья" Binding="{Binding Health_group}" Width="0.6*" FontSize="14"/>
