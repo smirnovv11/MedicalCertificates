@@ -1,8 +1,13 @@
 ﻿using MedicalCertificates.Models;
+using MedicalCertificates.Services.Alert;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,12 +30,21 @@ namespace MedicalCertificates.Views.Create
 
         public AddStudent()
         {
-            InitializeComponent();
-            db = new MedicalCertificatesDbContext();
+            try
+            {
+                InitializeComponent();
+                db = new MedicalCertificatesDbContext();
 
-            departmentcb.ItemsSource = db.DepartmentsTables.Select(d => d.Name).ToList();
+                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+                departmentcb.DisplayMemberPath = "Name";
 
-            isValid = new bool[6] { false, false, false, false, false, false };
+                isValid = new bool[6] { false, false, false, false, false, false };
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -44,14 +58,6 @@ namespace MedicalCertificates.Views.Create
             this.Close();
         }
 
-        private void YesButton_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var el in isValid)
-                if (!el) return;
-
-            DialogResult = true;
-            Close();
-        }
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -92,7 +98,8 @@ namespace MedicalCertificates.Views.Create
             {
                 groupcb.IsEnabled = true;
                 groupcb.ItemsSource = db.GroupsTables
-                    .Where(g => g.Course.Department.Name == (departmentcb.SelectedItem as string)).Select(g => g.Name).ToList();
+                    .Where(g => g.Course.Department.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
+                groupcb.DisplayMemberPath = "Name";
             }
             else
                 groupcb.IsEnabled = false;
@@ -124,6 +131,43 @@ namespace MedicalCertificates.Views.Create
                 groupBox.BorderBrush = new SolidColorBrush(Colors.Gray);
                 isValid[5] = true;
             }
+        }
+
+        private void YesButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var el in isValid)
+                if (!el)
+                {
+                    var alert = new Alert("Ошибка!", "Не все поля заполены или введеные значения неверны.", AlertType.Error);
+                    alert.ShowDialog();
+                    return;
+                }
+
+            try
+            {
+                AddStudentToDb();
+
+                var alert = new Alert("Добавление", "Учащийся добавлен.");
+                alert.ShowDialog();
+                this.DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Добавление", $"Не удалось добавить учащегося.\nОшибка: {ex.Message}.\nПовторите попытку.");
+                alert.ShowDialog();
+            }
+        }
+
+        private void AddStudentToDb()
+        {
+            var groupId = new SqlParameter("@GroupId", (groupcb.SelectedItem as GroupsTable).GroupId);
+            var firstName = new SqlParameter("@FirstName", firstNametb2.Text);
+            var secondName = new SqlParameter("@SecondName", secondNametb1.Text);
+            var thirdName = new SqlParameter("@ThirdName", thirdNametb3.Text);
+            var birthDate = new SqlParameter("@BirthDate", birthDatedp.SelectedDate);
+
+            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateStudent_procedure @GroupId, @FirstName, @SecondName, @ThirdName, @BirthDate", groupId, firstName, secondName, thirdName, birthDate);
         }
     }
 }

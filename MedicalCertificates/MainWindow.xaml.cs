@@ -99,7 +99,7 @@ namespace MedicalCertificates
                           .ThenInclude(g => g.StudentsTables)
                           .ToList();
 
-            var year = new SqlParameter("@Year", "23/24");
+            var year = new SqlParameter("@Year", "2023");
             var group = new SqlParameter("@GroupId", "1");
 
             var res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @Year, @GroupId", year, group).ToList();
@@ -128,6 +128,30 @@ namespace MedicalCertificates
         private void StudentAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddStudent();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+        private void DepartmentAddition_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddDepartment();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+        private void CourseAddition_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddCourse();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+        private void GroupAddition_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddGroup();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+        private void CertificateAddition_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddCertificate();
             if (wind.ShowDialog() == true)
                 UpdateAllDbData();
         }

@@ -10,7 +10,7 @@ namespace MedicalCertificates.Models
         public int CourseId { get; set; }
         public int OldGroupId { get; set; }
         public int NewGroupId { get; set; }
-        public string Year { get; set; } = null!;
+        public int Year { get; set; }
         public DateTime AlterDate { get; set; }
     }
 }

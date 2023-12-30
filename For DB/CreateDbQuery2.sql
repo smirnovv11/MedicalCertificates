@@ -42,7 +42,7 @@ CREATE TABLE Courses_table (
 	CourseId INT PRIMARY KEY IDENTITY NOT NULL,
 	DepartmentId INT NOT NULL,
 	Number INT DEFAULT '1' NOT NULL,
-	Year NVARCHAR(5) NOT NULL,
+	Year INT,
 	CONSTRAINT FK_Department FOREIGN KEY (DepartmentId) REFERENCES Departments_table(DepartmentId)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
@@ -113,7 +113,7 @@ CREATE TABLE StudentsGroupArchive_table(
 	CourseId INT NOT NULL,
 	OldGroupId INT NOT NULL,
 	NewGroupId INT NOT NULL,
-	Year NVARCHAR(5) NOT NULL,
+	Year INT NOT NULL,
 	AlterDate DATE DEFAULT GETDATE() NOT NULL
 )
 GO
@@ -147,7 +147,7 @@ AS
 BEGIN
 	DECLARE @OldGroup INT = (SELECT GroupId FROM deleted)
 	DECLARE @NewGroup INT = (SELECT GroupId FROM inserted)
-	DECLARE @Year NVARCHAR(5) = (SELECT Year FROM inserted 
+	DECLARE @Year INT = (SELECT Year FROM inserted 
 			JOIN Groups_table ON inserted.GroupId = Groups_table.GroupId
 			JOIN Courses_table ON Courses_table.CourseId = Groups_table.CourseId)
 	IF @OldGroup != @NewGroup
@@ -167,7 +167,7 @@ END
 GO
 
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
-INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (1, 1, '23/24')
+INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (1, 1, '2023')
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-341', 1)
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-342', 1)
 INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
@@ -227,7 +227,7 @@ BEGIN
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-			WHERE ValidDate > '30-08-' + '20' + SUBSTRING(@Year, 1, 2) AND IssueDate < '01-08-' + '20' + SUBSTRING(@Year, 4, 2) AND s.GroupId = @GroupId
+			WHERE ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND s.GroupId = @GroupId
 	UNION
 		SELECT s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
@@ -237,7 +237,7 @@ BEGIN
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 		JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-			WHERE sa.Year = @Year AND ValidDate > '30-08-' + '20' + SUBSTRING(@Year, 1, 2) AND IssueDate < '01-08-' + '20' + SUBSTRING(@Year, 4, 2) AND sa.OldGroupId = @GroupId
+			WHERE sa.Year = @Year AND ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND sa.OldGroupId = @GroupId
 		--TODO: Если он был в 2х разных группах или просто глянуть инфу за 2+ года назад то оно не приравняет Year
 	
 	)
@@ -248,15 +248,16 @@ BEGIN
 END
 GO
 
-EXEC ReceiveStudentsGroup_procedure '23/24', 1
+EXEC ReceiveStudentsGroup_procedure '2023', 1
 
 DROP PROCEDURE IF EXISTS UpdateCourseYear_procedure
 GO
 CREATE PROCEDURE UpdateCourseYear_procedure
 AS
 BEGIN
-	UPDATE Courses_table SET Number = Number + 1, Year = CAST((CAST(SUBSTRING(Year, 1, 2) AS INT) + 1) AS VARCHAR) + '/' + CAST((CAST(SUBSTRING(Year, 4, 2) AS INT) + 1) AS VARCHAR)
+	UPDATE Courses_table SET Number = Number + 1, Year = Year + 1
 		WHERE Number + 1 <= (SELECT MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = CourseId)
+	--Удалять после окончания обуч
 END
 
 
@@ -300,7 +301,7 @@ GO
 
 DROP PROCEDURE IF EXISTS CreateCourse_procedure
 GO
-CREATE PROCEDURE CreateCourse_procedure @DepId INT, @Number INT, @Year NVARCHAR(5)
+CREATE PROCEDURE CreateCourse_procedure @DepId INT, @Number INT, @Year INT
 AS
 BEGIN
 	INSERT Courses_table(DepartmentId, Number, Year) VALUES (@DepId, @Number, @Year)
@@ -318,7 +319,7 @@ GO
 
 DROP PROCEDURE IF EXISTS UpdateCourse_procedure
 GO
-CREATE PROCEDURE UpdateCourse_procedure @Id INT, @DepId INT, @Number INT, @Year NVARCHAR(5)
+CREATE PROCEDURE UpdateCourse_procedure @Id INT, @DepId INT, @Number INT, @Year INT
 AS
 BEGIN
 	UPDATE Courses_table SET DepartmentId = @DepId, Number = @Number, Year = @Year WHERE CourseId = @Id
