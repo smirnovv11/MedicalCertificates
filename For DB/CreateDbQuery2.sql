@@ -200,7 +200,7 @@ DROP VIEW IF EXISTS DataGrid_view
 GO
 CREATE VIEW DataGrid_view
 AS
-SELECT FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+SELECT s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
@@ -417,4 +417,4 @@ BEGIN
 END
 GO
 
-SELECT * FROM Departments_table
+SELECT * FROM Students_table

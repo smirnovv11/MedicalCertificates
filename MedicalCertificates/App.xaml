@@ -273,6 +273,10 @@
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter Property="Background" Value="#21386e" />
                                 </Trigger>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="Background" Value="Red" />
+                                    <Setter Property="Foreground" Value="#131f3b" />
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Setter.Value>

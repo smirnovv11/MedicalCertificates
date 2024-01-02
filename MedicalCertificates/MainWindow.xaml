@@ -9,7 +9,7 @@
         xmlns:services="clr-namespace:MedicalCertificates.Services"
         mc:Ignorable="d"
         Title="Bank Application"  Height="720" Width="1280" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded">
-    
+
     <Window.Resources>
         <services:NameConverter x:Key="NameConverter"/>
         <services:FullNameConverter x:Key="FullNameConverter"/>
@@ -56,9 +56,9 @@
                     Удалить
                     <Button.ContextMenu>
                         <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
-                            <MenuItem Name="DeleteDepartment" Style="{StaticResource PrimaryMenuItem}" Header="Удалить отделение" Padding="15 10 110 10"/>
-                            <MenuItem Name="DeleteCourse" Style="{StaticResource PrimaryMenuItem}" Header="Удалить курс"  Padding="15 10 110 10"/>
-                            <MenuItem Name="DeleteGroup" Style="{StaticResource PrimaryMenuItem}" Header="Удалить группу"  Padding="15 10 110 10" />
+                            <MenuItem Name="DeleteDepartment" Style="{StaticResource PrimaryMenuItem}" Header="Удалить отделение" Padding="15 10 110 10" Click="DeleteDepartment_Click" />
+                            <MenuItem Name="DeleteCourse" Style="{StaticResource PrimaryMenuItem}" Header="Удалить курс"  Padding="15 10 110 10" Click="DeleteCourse_Click"/>
+                            <MenuItem Name="DeleteGroup" Style="{StaticResource PrimaryMenuItem}" Header="Удалить группу"  Padding="15 10 110 10" Click="DeleteGroup_Click" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -96,7 +96,7 @@
                                 <TextBlock Text="{Binding Number, Converter={StaticResource AppendText}, ConverterParameter='-курс'}" FontWeight="Bold"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:GroupsTable}" ItemsSource="{Binding StudentsTables}">
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                <Button Content="{Binding Name}" FontWeight="Bold" Click="GroupTree_Click"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:StudentsTable}" ItemsSource="{Binding CertificatesTables}">
                                 <TextBlock>
@@ -127,8 +127,8 @@
                             Удалить
                             <Button.ContextMenu>
                                 <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
-                                    <MenuItem Name="DeleteStudentButton" Style="{StaticResource PrimaryAltMenuItem}" Header="Удалить выделенного студента" Padding="15 10 110 10"/>
-                                    <MenuItem Name="DeleteCertificateButton" Style="{StaticResource PrimaryAltMenuItem}" Header="Удалить выделенную справку"  Padding="15 10 110 10"/>
+                                    <MenuItem Name="DeleteStudentButton" Style="{StaticResource PrimaryAltMenuItem}" Header="Удалить выделенного студента" Padding="15 10 110 10" Click="DeleteStudentButton_Click"/>
+                                    <MenuItem Name="DeleteCertificateButton" Style="{StaticResource PrimaryAltMenuItem}" Header="Удалить выделенную справку"  Padding="15 10 110 10" Click="DeleteCertificateButton_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -136,6 +136,7 @@
                 </Grid>
 
                 <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="№" Width="0.13*" FontSize="14"/>
                         <DataGridTextColumn Header="ФИО учащегося" Width="0.8*" FontSize="14">
@@ -162,6 +163,25 @@
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}" />
                     </DataGrid.RowStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#FFA8C8E8" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
+                                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}, Path=IsKeyboardFocusWithin}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Background" Value="#FFA8C8E8" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
                 </DataGrid>
             </Grid>
 

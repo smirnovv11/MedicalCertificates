@@ -56,11 +56,13 @@ namespace MedicalCertificates.Services.Alert
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
+            this.DialogResult = false;
             this.Close();
         }
 
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
+            this.DialogResult = false;
             this.Close();
         }
 

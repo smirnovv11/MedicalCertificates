@@ -2,6 +2,7 @@
 using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
 using MedicalCertificates.Views.Create;
+using MedicalCertificates.Views.Delete;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -93,8 +94,9 @@ namespace MedicalCertificates
 
         private void UpdateAllDbData()
         {
+            db = new MedicalCertificatesDbContext();
             TreeMenu.ItemsSource = db.DepartmentsTables
-                          .Include(d => d.CoursesTables)
+                          .Include(d => d.CoursesTables.OrderBy(c => c.Number))
                           .ThenInclude(c => c.GroupsTables)
                           .ThenInclude(g => g.StudentsTables)
                           .ToList();
@@ -158,5 +160,54 @@ namespace MedicalCertificates
 
         #endregion
 
+        private void DeleteStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var alert = new AcceptAlert("Подтверждение", "Вы действительно собираетесь удалить выделенного студента?\nДанные о справках студента таже будут удалены.");
+            if (dataGrid.SelectedIndex > -1 && alert.ShowDialog() == true)
+            {
+                var studentId = new SqlParameter("@StudentId", (dataGrid.SelectedItem as DataGridView).StudentId);
+
+                db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteStudent_procedure @StudentId", studentId);
+                UpdateAllDbData();
+            }
+        }
+
+        private void DeleteCertificateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var alert = new AcceptAlert("Подтверждение", "Вы действительно собираетесь удалить справку выделенного студента?");
+            if (dataGrid.SelectedIndex > -1 && alert.ShowDialog() == true)
+            {
+                var certificateId = new SqlParameter("@Certificate", (dataGrid.SelectedItem as DataGridView).CertificateId);
+
+                db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteCertificate_procedure @Certificate", certificateId);
+                UpdateAllDbData();
+            }
+        }
+
+        private void DeleteDepartment_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new DeleteDepartment();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void DeleteCourse_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new DeleteCourse();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void DeleteGroup_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new DeleteGroup();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void GroupTree_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
