@@ -51,7 +51,16 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-                    <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top">Изменить</Button>
+                <Button Name="EditButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Click="ReportMenu_Click">
+                    Изменить
+                    <Button.ContextMenu>
+                        <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
+                            <MenuItem Name="UpdateDepartment" Style="{StaticResource PrimaryMenuItem}" Header="Изменить отделение" Padding="15 10 110 10" Click="UpdateDepartment_Click" />
+                            <MenuItem Name="UpdateCourse" Style="{StaticResource PrimaryMenuItem}" Header="Изменить курс"  Padding="15 10 110 10" Click="UpdateCourse_Click"/>
+                            <MenuItem Name="UpdateGroup" Style="{StaticResource PrimaryMenuItem}" Header="Изменить группу"  Padding="15 10 110 10" Click="UpdateGroup_Click"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
                 <Button Name="DeleteButton" Style="{StaticResource AltButton}" VerticalAlignment="Top" Margin="0 0 20 0" Click="ReportMenu_Click">
                     Удалить
                     <Button.ContextMenu>
@@ -123,6 +132,15 @@
                     <TextBlock Name="TableLabel" Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" TextAlignment="Center" Width="320" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button Name="AddToGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="CertificateAddition_Click">Добавить</Button>
+                        <Button Name="UpdateFromGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="ReportMenu_Click">
+                            Изменить
+                            <Button.ContextMenu>
+                                <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
+                                    <MenuItem Name="UpdateStudentButton" Style="{StaticResource PrimaryMenuItem}" Header="Изменить выделенного студента" Padding="15 10 110 10" Click="UpdateStudentButton_Click"/>
+                                    <MenuItem Name="UpdateCertificateButton" Style="{StaticResource PrimaryMenuItem}" Header="Изменить выделенную справку"  Padding="15 10 110 10" Click="UpdateCertificateButton_Click"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
                         <Button Name="DeleteFromGridButton" Style="{StaticResource ExportButton}" Height="38" FontSize="15" Margin="6" Click="ReportMenu_Click">
                             Удалить
                             <Button.ContextMenu>
@@ -136,7 +154,6 @@
                 </Grid>
 
                 <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
-                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="№" Width="0.13*" FontSize="14"/>
                         <DataGridTextColumn Header="ФИО учащегося" Width="0.8*" FontSize="14">
@@ -161,7 +178,9 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}" />
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                            <EventSetter Event="MouseDoubleClick" Handler="RowDoubleClock_Click"/>
+                        </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">

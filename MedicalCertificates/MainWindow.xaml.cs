@@ -3,6 +3,7 @@ using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
 using MedicalCertificates.Views.Create;
 using MedicalCertificates.Views.Delete;
+using MedicalCertificates.Views.Update;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -208,6 +209,54 @@ namespace MedicalCertificates
         private void GroupTree_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void UpdateDepartment_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new UpdateDepartment();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void UpdateCourse_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new UpdateCourse();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void UpdateGroup_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new UpdateGroup();
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
+        }
+
+        private void UpdateStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedIndex >= 0)
+            {
+                var wind = new UpdateStudent((dataGrid.SelectedItem as DataGridView).StudentId);
+                if (wind.ShowDialog() == true)
+                    UpdateAllDbData();
+            }
+        }
+
+        private void UpdateCertificateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedIndex >= 0)
+            {
+                var wind = new UpdateCertificate((dataGrid.SelectedItem as DataGridView).CertificateId);
+                if (wind.ShowDialog() == true)
+                    UpdateAllDbData();
+            }
+        }
+
+        private void RowDoubleClock_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new UpdateCertificate((dataGrid.SelectedItem as DataGridView).CertificateId);
+            if (wind.ShowDialog() == true)
+                UpdateAllDbData();
         }
     }
 }

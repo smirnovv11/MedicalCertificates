@@ -220,7 +220,7 @@ CREATE PROCEDURE ReceiveStudentsGroup_procedure @Year NVARCHAR(5), @GroupId INT
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -229,7 +229,7 @@ BEGIN
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 			WHERE ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND s.GroupId = @GroupId
 	UNION
-		SELECT s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -241,7 +241,7 @@ BEGIN
 		--TODO: Если он был в 2х разных группах или просто глянуть инфу за 2+ года назад то оно не приравняет Year
 	
 	)
-	SELECT FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC
@@ -289,7 +289,7 @@ GO
 
 DROP PROCEDURE IF EXISTS UpdateDepartment_procedure
 GO
-CREATE PROCEDURE UpdateDepartment_procedure @Id INT, @Name NVARCHAR(30), @MaxCourse INT
+CREATE PROCEDURE UpdateDepartment_procedure @Id INT, @Name NVARCHAR(100), @MaxCourse INT
 AS
 BEGIN
 	UPDATE Departments_table SET Name = @Name, MaxCourse = @MaxCourse WHERE DepartmentId = @Id
@@ -319,10 +319,10 @@ GO
 
 DROP PROCEDURE IF EXISTS UpdateCourse_procedure
 GO
-CREATE PROCEDURE UpdateCourse_procedure @Id INT, @DepId INT, @Number INT, @Year INT
+CREATE PROCEDURE UpdateCourse_procedure @Id INT, @Number INT, @Year INT
 AS
 BEGIN
-	UPDATE Courses_table SET DepartmentId = @DepId, Number = @Number, Year = @Year WHERE CourseId = @Id
+	UPDATE Courses_table SET Number = @Number, Year = @Year WHERE CourseId = @Id
 END
 GO
 
@@ -382,7 +382,7 @@ GO
 CREATE PROCEDURE UpdateStudent_procedure @Id INT, @GroupId INT, @FirstName NVARCHAR(20), @SecondName NVARCHAR(20), @ThirdName NVARCHAR(20), @BirthDate DATE
 AS
 BEGIN
-	UPDATE Students_table SET @GroupId = @GroupId, FirstName = @FirstName, SecondName = @SecondName, ThirdName = @ThirdName, BirthDate = @BirthDate WHERE StudentId = @Id
+	UPDATE Students_table SET GroupId = @GroupId, FirstName = @FirstName, SecondName = @SecondName, ThirdName = @ThirdName, BirthDate = @BirthDate WHERE StudentId = @Id
 END
 GO
 
@@ -417,4 +417,4 @@ BEGIN
 END
 GO
 
-SELECT * FROM Students_table
+SELECT * FROM StudentsGroupArchive_table
