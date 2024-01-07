@@ -32,6 +32,9 @@ namespace MedicalCertificates
     public partial class MainWindow : Window
     {
         MedicalCertificatesDbContext db;
+        int currGroupId;
+        int currStudentId;
+        int currYear;
 
         public MainWindow()
         {
@@ -46,7 +49,10 @@ namespace MedicalCertificates
                 cultureInfo.DateTimeFormat = dateTimeFormat;
                 Thread.CurrentThread.CurrentCulture = cultureInfo;
 
-                UpdateAllDbData();
+                UpdateTreeData();
+                currStudentId = -1;
+
+                TableLabel.Text = "Выберите группу или учащегося для просмотра информации";
             }
             catch (Exception ex)
             {
@@ -95,17 +101,41 @@ namespace MedicalCertificates
 
         private void UpdateAllDbData()
         {
-            db = new MedicalCertificatesDbContext();
-            TreeMenu.ItemsSource = db.DepartmentsTables
-                          .Include(d => d.CoursesTables.OrderBy(c => c.Number))
-                          .ThenInclude(c => c.GroupsTables)
-                          .ThenInclude(g => g.StudentsTables)
-                          .ToList();
+            UpdateTreeData();
+            UpdateGridData();
+        }
 
-            var year = new SqlParameter("@Year", "2023");
-            var group = new SqlParameter("@GroupId", "1");
+        private void UpdateTreeData()
+        {
+            if (currGroupId != null && currGroupId >= 0)
+            {
+                db = new MedicalCertificatesDbContext();
+                TreeMenu.ItemsSource = db.DepartmentsTables
+                              .Include(d => d.CoursesTables.OrderBy(c => c.Number))
+                              .ThenInclude(c => c.GroupsTables)
+                              .ThenInclude(g => g.StudentsTables.OrderBy(s => s.SecondName).ThenBy(s => s.FirstName))
+                              .ToList();
+            }
+        }
 
-            var res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @Year, @GroupId", year, group).ToList();
+        private void UpdateGridData()
+        {
+            List<DataGridView>? res = new List<DataGridView>();
+            if (currGroupId != null && currGroupId >= 0)
+            {
+                db = new MedicalCertificatesDbContext();
+                var year = new SqlParameter("@Year", currYear);
+                var group = new SqlParameter("@GroupId", currGroupId);
+
+                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @Year, @GroupId", year, group).ToList();
+            }
+            else if (currStudentId != null && currStudentId >= 0)
+            {
+                db = new MedicalCertificatesDbContext();
+
+                res = db.DataGridViews.Where(s => s.StudentId == currStudentId).ToList();
+            }
+
             dataGrid.ItemsSource = res;
         }
 
@@ -125,6 +155,56 @@ namespace MedicalCertificates
             alert.ShowDialog();
         }
 
+        private void GroupTree_Click(object sender, RoutedEventArgs e)
+        {
+            var group = ((sender as Button).DataContext as GroupsTable);
+            currGroupId = group.GroupId;
+            currStudentId = -1;
+            currYear = (int)group.Course.Year;
+
+            UpdateYearCb();
+
+            YearCb.Visibility = Visibility.Visible;
+            UpdateGridData();
+
+            TableLabel.Text = $"Листок здоровья группы {group.Name} ({group.Course.Number} курс)";
+        }
+
+        private void UpdateYearCb()
+        {
+            var course = db.CoursesTables.First(c => c.CourseId
+            == db.GroupsTables.First(g => g.GroupId == currGroupId)
+            .CourseId);
+
+            List<string> years = new List<string>();
+            int year = currYear;
+
+            for (int i = course.Number; i >= 1; i--, year--)
+            {
+                years.Add(year.ToString().Substring(2, 2) + "/" + (year + 1).ToString().Substring(2, 2));
+            }
+
+            YearCb.ItemsSource = years;
+            YearCb.SelectedIndex = 0;
+        }
+
+        private void YearCb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            currYear = currYear - YearCb.SelectedIndex;
+            UpdateGridData();
+        }
+
+        private void StudentTree_Click(object sender, RoutedEventArgs e)
+        {
+            var student = ((sender as Button).DataContext as StudentsTable);
+            currStudentId = student.StudentId;
+            currGroupId = -1;
+
+            YearCb.Visibility = Visibility.Hidden;
+            UpdateGridData();
+
+            TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+        }
 
         #region Addition
 
@@ -156,10 +236,12 @@ namespace MedicalCertificates
         {
             var wind = new AddCertificate();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateGridData();
         }
 
         #endregion
+
+        #region Deleting
 
         private void DeleteStudentButton_Click(object sender, RoutedEventArgs e)
         {
@@ -181,7 +263,7 @@ namespace MedicalCertificates
                 var certificateId = new SqlParameter("@Certificate", (dataGrid.SelectedItem as DataGridView).CertificateId);
 
                 db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteCertificate_procedure @Certificate", certificateId);
-                UpdateAllDbData();
+                UpdateGridData();
             }
         }
 
@@ -206,10 +288,9 @@ namespace MedicalCertificates
                 UpdateAllDbData();
         }
 
-        private void GroupTree_Click(object sender, RoutedEventArgs e)
-        {
+        #endregion
 
-        }
+        #region Updating
 
         private void UpdateDepartment_Click(object sender, RoutedEventArgs e)
         {
@@ -246,15 +327,40 @@ namespace MedicalCertificates
         {
             if (dataGrid.SelectedIndex >= 0)
             {
-                var wind = new UpdateCertificate((dataGrid.SelectedItem as DataGridView).CertificateId);
-                if (wind.ShowDialog() == true)
-                    UpdateAllDbData();
+                CastUpdateWind();
             }
         }
 
         private void RowDoubleClock_Click(object sender, RoutedEventArgs e)
         {
+            CastUpdateWind();
+        }
+
+        private void CastUpdateWind()
+        {
             var wind = new UpdateCertificate((dataGrid.SelectedItem as DataGridView).CertificateId);
+            wind.ShowDialog();
+            if (wind.DialogResult == true && wind.toStudent == true)
+            {
+                var student = db.StudentsTables.First(s => s.StudentId == (dataGrid.SelectedItem as DataGridView).StudentId);
+                currStudentId = student.StudentId;
+                currGroupId = -1;
+
+                YearCb.Visibility = Visibility.Hidden;
+                UpdateGridData();
+
+                TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+            }
+            else if (wind.DialogResult == true)
+                UpdateGridData();
+        }
+
+
+        #endregion
+
+        private void StudentTree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var wind = new UpdateStudent(currStudentId);
             if (wind.ShowDialog() == true)
                 UpdateAllDbData();
         }

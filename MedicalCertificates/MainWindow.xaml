@@ -14,6 +14,8 @@
         <services:NameConverter x:Key="NameConverter"/>
         <services:FullNameConverter x:Key="FullNameConverter"/>
         <services:AppendText x:Key="AppendText"/>
+        <services:DateBackgroundConverter x:Key="DateBackgroundConverter"/>
+        <services:DateForegroundConverter x:Key="DateForegroundConverter"/>
     </Window.Resources>
 
     <Grid Background="#ebf0f3">
@@ -58,6 +60,8 @@
                             <MenuItem Name="UpdateDepartment" Style="{StaticResource PrimaryMenuItem}" Header="Изменить отделение" Padding="15 10 110 10" Click="UpdateDepartment_Click" />
                             <MenuItem Name="UpdateCourse" Style="{StaticResource PrimaryMenuItem}" Header="Изменить курс"  Padding="15 10 110 10" Click="UpdateCourse_Click"/>
                             <MenuItem Name="UpdateGroup" Style="{StaticResource PrimaryMenuItem}" Header="Изменить группу"  Padding="15 10 110 10" Click="UpdateGroup_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Изменить выделенного студента" Padding="15 10 110 10" Click="UpdateStudentButton_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Изменить выделенную справку"  Padding="15 10 110 10" Click="UpdateCertificateButton_Click"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -68,6 +72,8 @@
                             <MenuItem Name="DeleteDepartment" Style="{StaticResource PrimaryMenuItem}" Header="Удалить отделение" Padding="15 10 110 10" Click="DeleteDepartment_Click" />
                             <MenuItem Name="DeleteCourse" Style="{StaticResource PrimaryMenuItem}" Header="Удалить курс"  Padding="15 10 110 10" Click="DeleteCourse_Click"/>
                             <MenuItem Name="DeleteGroup" Style="{StaticResource PrimaryMenuItem}" Header="Удалить группу"  Padding="15 10 110 10" Click="DeleteGroup_Click" />
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Удалить выделенного студента" Padding="15 10 110 10" Click="DeleteStudentButton_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Удалить выделенную справку"  Padding="15 10 110 10" Click="DeleteCertificateButton_Click"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -99,24 +105,24 @@
                     <TreeView Name="TreeMenu" FontSize="16" Padding="0 10">
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type models:DepartmentsTable}" ItemsSource="{Binding CoursesTables}">
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                <Label Content="{Binding Name}" FontWeight="Bold" Padding="2"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:CoursesTable}" ItemsSource="{Binding GroupsTables}">
-                                <TextBlock Text="{Binding Number, Converter={StaticResource AppendText}, ConverterParameter='-курс'}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Number, Converter={StaticResource AppendText}, ConverterParameter='-курс'}" FontWeight="Bold" Padding="2"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:GroupsTable}" ItemsSource="{Binding StudentsTables}">
-                                <Button Content="{Binding Name}" FontWeight="Bold" Click="GroupTree_Click"/>
+                                <Button Content="{Binding Name}" FontWeight="Bold" Click="GroupTree_Click" Width="100" Style="{StaticResource PrimaryTreeItem}"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:StudentsTable}" ItemsSource="{Binding CertificatesTables}">
-                                <TextBlock>
-                                    <TextBlock.Text>
+                                <Button Name="StudentTree" Click="StudentTree_Click" MouseDoubleClick="StudentTree_MouseDoubleClick" Width="170" Style="{StaticResource PrimaryTreeItem}">
+                                    <Button.Content>
                                         <MultiBinding Converter="{StaticResource NameConverter}">
                                             <Binding Path="SecondName" />
                                             <Binding Path="FirstName" />
                                             <Binding Path="ThirdName" />
                                         </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
+                                    </Button.Content>
+                                </Button>
                             </HierarchicalDataTemplate>
                         </TreeView.Resources>
                     </TreeView>
@@ -129,8 +135,9 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Margin="40 10">
-                    <TextBlock Name="TableLabel" Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" TextAlignment="Center" Width="320" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
+                    <TextBlock Name="TableLabel" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Width="320" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <ComboBox Name="YearCb" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="80" Padding="10 5" FontSize="15" Cursor="Hand" Height="38" SelectionChanged="YearCb_SelectionChanged"/>
                         <Button Name="AddToGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="CertificateAddition_Click">Добавить</Button>
                         <Button Name="UpdateFromGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="ReportMenu_Click">
                             Изменить
@@ -168,7 +175,15 @@
                         <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="0.5*" FontSize="14"/>
                         <DataGridTextColumn Header="Группа здоровья" Binding="{Binding HealthGroup}" Width="0.6*" FontSize="14"/>
                         <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.6*" FontSize="14"/>
-                        <DataGridTextColumn Header="Справка годна" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="Справка годна" Width="0.5*" FontSize="14" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Background" Value="{Binding ValidDate, Converter={StaticResource DateBackgroundConverter}}"/>
+                                    <Setter Property="Foreground" Value="{Binding ValidDate, Converter={StaticResource DateForegroundConverter}}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTemplateColumn Width="0.4*" Header="Примечание">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

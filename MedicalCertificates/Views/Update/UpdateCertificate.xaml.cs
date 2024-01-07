@@ -26,6 +26,7 @@ namespace MedicalCertificates.Views.Update
         MedicalCertificatesDbContext db;
         bool[] isValid;
         CertificatesTable item;
+        public bool toStudent;
 
         public UpdateCertificate(int certificateId)
         {
@@ -50,6 +51,7 @@ namespace MedicalCertificates.Views.Update
                 notetb.Text = item.Note;
 
                 isValid = new bool[4] { true, true, true, true };
+                toStudent = false;
             }
             catch (Exception ex)
             {
@@ -164,6 +166,13 @@ namespace MedicalCertificates.Views.Update
             var id = new SqlParameter("@Id", item.CertificateId);
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC UpdateCertificate_procedure @Id, @Health, @PE, @Issue, @Valid, @Note", id, healthId, peId, issueDate, validDate, note);
+        }
+
+        private void ToStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            toStudent = true;
+            DialogResult = true;
+            this.Close();
         }
     }
 }

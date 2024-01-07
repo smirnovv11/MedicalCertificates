@@ -190,7 +190,7 @@ DROP VIEW IF EXISTS StudentsCertificates_view
 GO
 CREATE VIEW StudentsCertificates_view
 AS
-SELECT s.StudentId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note FROM Students_table AS s
+SELECT DISTINCT s.StudentId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note FROM Students_table AS s
 	JOIN Certificates_table as c ON c.StudentId = s.StudentId
 	JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 	JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
@@ -200,16 +200,15 @@ DROP VIEW IF EXISTS DataGrid_view
 GO
 CREATE VIEW DataGrid_view
 AS
-SELECT s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+SELECT DISTINCT s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
-		JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
-		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 GO
 
-SELECT * FROM StudentsCertificates_view WHERE StudentId = 1
+SELECT * FROM DataGrid_view WHERE StudentId = 3
+SELECT * FROM StudentsCertificates_view WHERE StudentId = 3
 
 
 --Процедуры
@@ -227,24 +226,25 @@ BEGIN
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-			WHERE ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND s.GroupId = @GroupId
-	UNION
-		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
-			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
-		FROM Students_table AS s
-		JOIN Certificates_table as c ON c.StudentId = s.StudentId
-		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
-		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
-		JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
-		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-			WHERE sa.Year = @Year AND ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND sa.OldGroupId = @GroupId
+			WHERE s.GroupId = @GroupId
+			--WHERE ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND s.GroupId = @GroupId
+	--UNION
+	--	SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+	--		   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
+	--	FROM Students_table AS s
+	--	JOIN Certificates_table as c ON c.StudentId = s.StudentId
+	--	JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+	--	JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+	--	JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
+	--	JOIN Groups_table AS g ON g.GroupId = s.GroupId
+			--WHERE sa.Year = @Year AND ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND sa.OldGroupId = @GroupId
 		--TODO: Если он был в 2х разных группах или просто глянуть инфу за 2+ года назад то оно не приравняет Year
 	
 	)
 	SELECT StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
-	ORDER BY SecondName ASC
+	ORDER BY SecondName ASC, FirstName ASC
 END
 GO
 
@@ -255,11 +255,12 @@ GO
 CREATE PROCEDURE UpdateCourseYear_procedure
 AS
 BEGIN
+	DELETE Courses_table
+		WHERE Number + 1 > (SELECT MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = CourseId)
 	UPDATE Courses_table SET Number = Number + 1, Year = Year + 1
-		WHERE Number + 1 <= (SELECT MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = CourseId)
-	--Удалять после окончания обуч
 END
 
+EXEC UpdateCourseYear_procedure
 
 
 
@@ -410,10 +411,10 @@ GO
 
 DROP PROCEDURE IF EXISTS UpdateCertificate_procedure
 GO
-CREATE PROCEDURE UpdateCertificate_procedure @Id INT, @StudentId INT, @HealthGroupId INT, @PEGroupId INT, @IssueDate DATE, @ValidDate DATE, @Note NVARCHAR(MAX)
+CREATE PROCEDURE UpdateCertificate_procedure @Id INT, @HealthGroupId INT, @PEGroupId INT, @IssueDate DATE, @ValidDate DATE, @Note NVARCHAR(MAX)
 AS
 BEGIN
-	UPDATE Certificates_table SET StudentId = @StudentId, HealthGroupId = @HealthGroupId, PEGroupId = @PEGroupId, IssueDate = @IssueDate, @ValidDate = @ValidDate, Note = @Note WHERE CertificateId = @Id
+	UPDATE Certificates_table SET HealthGroupId = @HealthGroupId, PEGroupId = @PEGroupId, IssueDate = @IssueDate, ValidDate = @ValidDate, Note = @Note WHERE CertificateId = @Id
 END
 GO
 
