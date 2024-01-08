@@ -166,14 +166,18 @@ BEGIN
 END
 GO
 
+INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Неопределенные', 999)
+INSERT INTO Courses_table(DepartmentId, Number, Year) VALUES (1, 99, 2023)
+INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
+
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
-INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (1, 1, '2023')
-INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-341', 1)
-INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-342', 1)
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Виктор', N'Веревкин', N'Васильевич', '31-12-2004')
-INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (1, N'Евгений', N'Анокин', N'Андреевич', '12-12-2004')
-UPDATE Students_table SET GroupId = 2 WHERE StudentId = 2
+--UPDATE Courses_table SET Number = 99 WHERE CourseId = 9
+INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (2, 2, '2023') 
+INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-341', 2)
+INSERT INTO Groups_table(Name, CourseId) VALUES (N'T-342', 2)
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Виктор', N'Веревкин', N'Васильевич', '31-12-2004')
+INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Евгений', N'Анокин', N'Андреевич', '12-12-2004')
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (1, 3, 3, '12-12-2022', '12-12-2023')
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (1, 3, 3, '12-12-2021', '12-12-2022')
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (1, 3, 3, '12-07-2023', '12-07-2024')
@@ -182,6 +186,7 @@ INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, V
 
 SELECT * FROM StudentsGroupArchive_table
 SELECT * FROM Students_table
+SELECT * FROM Departments_table
 
 
 --Представления

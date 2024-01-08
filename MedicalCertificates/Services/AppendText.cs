@@ -13,6 +13,10 @@ namespace MedicalCertificates.Services
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is int numb && numb >= 90)
+            {
+                return "Без курса";
+            }
             return value.ToString() + (string)parameter;
         }
 

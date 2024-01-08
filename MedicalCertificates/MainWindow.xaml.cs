@@ -23,6 +23,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.ExtendedProperties;
 
 namespace MedicalCertificates
 {
@@ -354,15 +357,73 @@ namespace MedicalCertificates
             else if (wind.DialogResult == true)
                 UpdateGridData();
         }
-
-
-        #endregion
-
         private void StudentTree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var wind = new UpdateStudent(currStudentId);
             if (wind.ShowDialog() == true)
                 UpdateAllDbData();
+        }
+
+        #endregion
+
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Filter = "Excel Files (*.xls;*.xlsx;*.xlsm)|*.xls;*.xlsx;*.xlsm";
+                Nullable<bool> result = dlg.ShowDialog();
+
+                if (result == true)
+                {
+                    using (var workbook = new XLWorkbook(dlg.FileName))
+                    {
+                        var worksheet = workbook.Worksheets.Worksheet(1);
+                        var rowCount = worksheet.LastRowUsed().RowNumber();
+                        var studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).FirstOrDefault().StudentId + 1;
+                        var group = db.GroupsTables.First(g => g.CourseId
+                                == db.CoursesTables.First(c => c.DepartmentId
+                                == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
+                                .DepartmentId)
+                                .CourseId)
+                                .GroupId;
+
+                        for (int row = 1; row <= rowCount; ++row, studentId++)
+                        {
+                            var groupId = new SqlParameter("@GroupId", group);
+                            var firstName = new SqlParameter("@FirstName", worksheet.Cell(row, 2).GetValue<String>());
+                            var secondName = new SqlParameter("@SecondName", worksheet.Cell(row, 1).GetValue<String>());
+                            var thirdName = new SqlParameter("@ThirdName", worksheet.Cell(row, 3).GetValue<String>());
+                            var birthDate = new SqlParameter("@BirthDate", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()));
+
+                            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateStudent_procedure @GroupId, @FirstName, @SecondName, @ThirdName, @BirthDate", groupId, firstName, secondName, thirdName, birthDate);
+
+                            var studentParam = new SqlParameter("@StudentId", studentId);
+                            var healthId = new SqlParameter("@Health", 1);
+                            var peId = new SqlParameter("@PE", 1);
+                            var issueDate = new SqlParameter("@Issue", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()));
+                            var validDate = new SqlParameter("@Valid", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()).AddMonths(1));
+                            var note = new SqlParameter("@Note", "");
+
+                            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCertificate_procedure @StudentId, @Health, @PE, @Issue, @Valid, @Note", studentParam, healthId, peId, issueDate, validDate, note);
+                        }
+
+                        currGroupId = group;
+                        currStudentId = -1;
+
+                        YearCb.Visibility = Visibility.Hidden;
+                        UpdateGridData();
+
+                        TableLabel.Text = $"Листок здоровья неопределенных по группам учащихся";
+                    }
+                }
+            }
+            catch (Exception ex) 
+            {
+                var alert = new Alert("Ошибка!", ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
     }
 }

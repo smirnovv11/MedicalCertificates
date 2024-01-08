@@ -39,7 +39,7 @@
 
         <Grid Grid.Row="1" Background="#223563">
             <StackPanel Grid.Column="0" Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top">Импорт</Button>
+                <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top" Click="ImportButton_Click">Импорт</Button>
                 <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0" Click="UpdateButton_Click">Обновить</Button>
                 <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Click="ReportMenu_Click">
                     Добавить
