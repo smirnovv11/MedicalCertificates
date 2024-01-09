@@ -392,6 +392,15 @@ BEGIN
 END
 GO
 
+DROP PROCEDURE IF EXISTS UpdateStudentGroup_procedure
+GO
+CREATE PROCEDURE UpdateStudentGroup_procedure @Id INT, @GroupId INT
+AS
+BEGIN
+	UPDATE Students_table SET GroupId = @GroupId WHERE StudentId = @Id
+END
+GO
+
 
 
 --Справка

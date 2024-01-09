@@ -138,6 +138,25 @@ namespace MedicalCertificates
 
                 res = db.DataGridViews.Where(s => s.StudentId == currStudentId).ToList();
             }
+            var unSortGroup = db.GroupsTables.First(g => g.CourseId
+                                == db.CoursesTables.First(c => c.DepartmentId
+                                == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
+                                .DepartmentId)
+                                .CourseId)
+                                .GroupId;
+
+            if (currGroupId == unSortGroup)
+            {
+                dataGrid.SelectionMode = DataGridSelectionMode.Extended;
+                UnSortGridControlPanel.Visibility = Visibility.Visible;
+                DefaultControlPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                dataGrid.SelectionMode = DataGridSelectionMode.Single;
+                UnSortGridControlPanel.Visibility = Visibility.Collapsed;
+                DefaultControlPanel.Visibility = Visibility.Visible;
+            }
 
             dataGrid.ItemsSource = res;
         }
@@ -258,6 +277,21 @@ namespace MedicalCertificates
             }
         }
 
+        private void DeleteStudentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var alert = new AcceptAlert("Подтверждение", "Вы действительно собираетесь удалить выделенного(-ых) студента(-ов)?\nДанные о справках студента(-ов) таже будут удалены.");
+            if (dataGrid.SelectedIndex > -1 && alert.ShowDialog() == true)
+            {
+                foreach(var el in dataGrid.SelectedItems)
+                {
+                    var studentId = new SqlParameter("@StudentId", (el as DataGridView).StudentId);
+
+                    db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteStudent_procedure @StudentId", studentId);
+                }
+                UpdateAllDbData();
+            }
+        }
+
         private void DeleteCertificateButton_Click(object sender, RoutedEventArgs e)
         {
             var alert = new AcceptAlert("Подтверждение", "Вы действительно собираетесь удалить справку выделенного студента?");
@@ -364,6 +398,16 @@ namespace MedicalCertificates
                 UpdateAllDbData();
         }
 
+        private void DefineGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedIndex > -1)
+            {
+                var wind = new DefineGroup(dataGrid.SelectedItems);
+                if (wind.ShowDialog() == true)
+                    UpdateAllDbData();
+            }
+        }
+
         #endregion
 
 
@@ -425,5 +469,6 @@ namespace MedicalCertificates
                 alert.ShowDialog();
             }
         }
+
     }
 }

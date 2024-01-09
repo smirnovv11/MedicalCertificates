@@ -102,10 +102,10 @@
                     BorderThickness="0 0 1 0"
                     BorderBrush="#7F081724">
                 <ScrollViewer Margin="15 25" VerticalScrollBarVisibility="Auto">
-                    <TreeView Name="TreeMenu" FontSize="16" Padding="0 10">
+                    <TreeView Name="TreeMenu" FontSize="16" Padding="0 10" Focusable="False">
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type models:DepartmentsTable}" ItemsSource="{Binding CoursesTables}">
-                                <Label Content="{Binding Name}" FontWeight="Bold" Padding="2"/>
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="2" Focusable="False"/>
                             </HierarchicalDataTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:CoursesTable}" ItemsSource="{Binding GroupsTables}">
                                 <TextBlock Text="{Binding Number, Converter={StaticResource AppendText}, ConverterParameter='-курс'}" FontWeight="Bold" Padding="2"/>
@@ -136,7 +136,7 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Margin="40 10">
                     <TextBlock Name="TableLabel" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Width="320" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel Name="DefaultControlPanel" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <ComboBox Name="YearCb" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="80" Padding="10 5" FontSize="15" Cursor="Hand" Height="38" SelectionChanged="YearCb_SelectionChanged"/>
                         <Button Name="AddToGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="CertificateAddition_Click">Добавить</Button>
                         <Button Name="UpdateFromGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="ReportMenu_Click">
@@ -157,6 +157,11 @@
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
+                    </StackPanel>
+
+                    <StackPanel Name="UnSortGridControlPanel" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed">
+                        <Button Name="DefineGroupButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="DefineGroupButton_Click">Определить группу</Button>
+                        <Button Name="MultiDeleteButton" Style="{StaticResource ExportButton}" Height="38" FontSize="15" Margin="6" Click="DeleteStudentsButton_Click">Удалить</Button>
                     </StackPanel>
                 </Grid>
 
