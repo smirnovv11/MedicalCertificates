@@ -26,6 +26,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.ExtendedProperties;
+using System.Data;
 
 namespace MedicalCertificates
 {
@@ -37,7 +38,6 @@ namespace MedicalCertificates
         MedicalCertificatesDbContext db;
         int currGroupId;
         int currStudentId;
-        int currYear;
 
         public MainWindow()
         {
@@ -97,11 +97,6 @@ namespace MedicalCertificates
             contextMenu.IsOpen = true;
         }
 
-        private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
-        {
-            //DataGridSorting.HandleDataGridSorting((DataGrid)sender, e);
-        }
-
         private void UpdateAllDbData()
         {
             UpdateTreeData();
@@ -127,10 +122,9 @@ namespace MedicalCertificates
             if (currGroupId != null && currGroupId >= 0)
             {
                 db = new MedicalCertificatesDbContext();
-                var year = new SqlParameter("@Year", currYear);
                 var group = new SqlParameter("@GroupId", currGroupId);
 
-                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @Year, @GroupId", year, group).ToList();
+                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure 2024, @GroupId", group).ToList();
             }
             else if (currStudentId != null && currStudentId >= 0)
             {
@@ -182,38 +176,10 @@ namespace MedicalCertificates
             var group = ((sender as Button).DataContext as GroupsTable);
             currGroupId = group.GroupId;
             currStudentId = -1;
-            currYear = (int)group.Course.Year;
 
-            UpdateYearCb();
-
-            YearCb.Visibility = Visibility.Visible;
             UpdateGridData();
 
             TableLabel.Text = $"Листок здоровья группы {group.Name} ({group.Course.Number} курс)";
-        }
-
-        private void UpdateYearCb()
-        {
-            var course = db.CoursesTables.First(c => c.CourseId
-            == db.GroupsTables.First(g => g.GroupId == currGroupId)
-            .CourseId);
-
-            List<string> years = new List<string>();
-            int year = currYear;
-
-            for (int i = course.Number; i >= 1; i--, year--)
-            {
-                years.Add(year.ToString().Substring(2, 2) + "/" + (year + 1).ToString().Substring(2, 2));
-            }
-
-            YearCb.ItemsSource = years;
-            YearCb.SelectedIndex = 0;
-        }
-
-        private void YearCb_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            currYear = currYear - YearCb.SelectedIndex;
-            UpdateGridData();
         }
 
         private void StudentTree_Click(object sender, RoutedEventArgs e)
@@ -222,7 +188,6 @@ namespace MedicalCertificates
             currStudentId = student.StudentId;
             currGroupId = -1;
 
-            YearCb.Visibility = Visibility.Hidden;
             UpdateGridData();
 
             TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
@@ -383,7 +348,6 @@ namespace MedicalCertificates
                 currStudentId = student.StudentId;
                 currGroupId = -1;
 
-                YearCb.Visibility = Visibility.Hidden;
                 UpdateGridData();
 
                 TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
@@ -433,7 +397,7 @@ namespace MedicalCertificates
                                 .CourseId)
                                 .GroupId;
 
-                        for (int row = 1; row <= rowCount; ++row, studentId++)
+                        for (int row = 2; row <= rowCount; ++row, studentId++)
                         {
                             var groupId = new SqlParameter("@GroupId", group);
                             var firstName = new SqlParameter("@FirstName", worksheet.Cell(row, 2).GetValue<String>());
@@ -456,7 +420,6 @@ namespace MedicalCertificates
                         currGroupId = group;
                         currStudentId = -1;
 
-                        YearCb.Visibility = Visibility.Hidden;
                         UpdateGridData();
 
                         TableLabel.Text = $"Листок здоровья неопределенных по группам учащихся";

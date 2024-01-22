@@ -149,5 +149,18 @@ namespace MedicalCertificates.Views.Create
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCourse_procedure @DepId, @Number, @Year", departmentId, number, year);
         }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                YesButton.Focus();
+                this.YesButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+            else if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
+        }
     }
 }

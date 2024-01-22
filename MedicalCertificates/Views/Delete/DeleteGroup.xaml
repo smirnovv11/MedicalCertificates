@@ -5,8 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Views.Delete"
         mc:Ignorable="d"
-        Title="Удаление" Height="240" Width="470" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
-    <Border BorderThickness="1" BorderBrush="#081724">
+        Title="Удаление" Height="240" Width="470" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" WindowStyle="None"        AllowsTransparency="True" Background="Transparent">
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0"
+                                     To="1"
+                                     Duration="0:0:0.12">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border BorderThickness="1" BorderBrush="#081724" Background="#FFF">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>

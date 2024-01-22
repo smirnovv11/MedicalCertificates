@@ -205,14 +205,14 @@ DROP VIEW IF EXISTS DataGrid_view
 GO
 CREATE VIEW DataGrid_view
 AS
-SELECT DISTINCT s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 GO
 
-SELECT * FROM DataGrid_view WHERE StudentId = 3
+SELECT * FROM DataGrid_view
 SELECT * FROM StudentsCertificates_view WHERE StudentId = 3
 
 
@@ -246,7 +246,7 @@ BEGIN
 		--TODO: Если он был в 2х разных группах или просто глянуть инфу за 2+ года назад то оно не приравняет Year
 	
 	)
-	SELECT StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC, FirstName ASC

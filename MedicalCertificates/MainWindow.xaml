@@ -8,8 +8,28 @@
         xmlns:models="clr-namespace:MedicalCertificates.Models"
         xmlns:services="clr-namespace:MedicalCertificates.Services"
         mc:Ignorable="d"
-        Title="Bank Application"  Height="720" Width="1280" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" WindowState="Normal" Loaded="Window_Loaded">
+        Title="Bank Application" Name="StartWindow"  Height="720" Width="1280"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None"
+        WindowState="Normal" Loaded="Window_Loaded"
+        AllowsTransparency="True" Background="Transparent">
 
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0"
+                                     To="1"
+                                     Duration="0:0:0.12">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    
     <Window.Resources>
         <services:NameConverter x:Key="NameConverter"/>
         <services:FullNameConverter x:Key="FullNameConverter"/>
@@ -102,7 +122,7 @@
                     BorderThickness="0 0 1 0"
                     BorderBrush="#7F081724">
                 <ScrollViewer Margin="15 25" VerticalScrollBarVisibility="Auto">
-                    <TreeView Name="TreeMenu" FontSize="16" Padding="0 10" Focusable="False">
+                    <TreeView Name="TreeMenu" FontSize="16" Padding="0 10">
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type models:DepartmentsTable}" ItemsSource="{Binding CoursesTables}">
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="2" Focusable="False"/>
@@ -137,7 +157,6 @@
                 <Grid Grid.Row="0" Margin="40 10">
                     <TextBlock Name="TableLabel" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Width="320" FontSize="16" FontWeight="DemiBold">Листок здоровья группы ##### (# курс) на 20##/20## учебный год</TextBlock>
                     <StackPanel Name="DefaultControlPanel" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <ComboBox Name="YearCb" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="80" Padding="10 5" FontSize="15" Cursor="Hand" Height="38" SelectionChanged="YearCb_SelectionChanged"/>
                         <Button Name="AddToGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="CertificateAddition_Click">Добавить</Button>
                         <Button Name="UpdateFromGridButton" Style="{StaticResource PrimaryButton}" Height="38" FontSize="15" Margin="6" Click="ReportMenu_Click">
                             Изменить
@@ -165,9 +184,9 @@
                     </StackPanel>
                 </Grid>
 
-                <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" Sorting="DataGrid_Sorting" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+                <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" Width="0.13*" FontSize="14"/>
+                        <DataGridTextColumn Header="№" Binding="{Binding RowNum}" Width="0.13*" FontSize="14"/>
                         <DataGridTextColumn Header="ФИО учащегося" Width="0.8*" FontSize="14">
                             <DataGridTextColumn.Binding>
                                 <MultiBinding Converter="{StaticResource FullNameConverter}">

@@ -72,9 +72,12 @@ namespace MedicalCertificates.Views.Delete
 
             try
             {
+                this.PreviewKeyDown -= Window_PreviewKeyDown;
                 var alert = new AcceptAlert("Подтверждение", "Вы действительно собираетесь удалить отделение?\nВсе курсы, группы, а также студенты принадлежащие к данному отделению будут удалены.");
                 if (alert.ShowDialog() == true)
                     DeleteDepartmentFromDb();
+                else
+                    this.PreviewKeyDown += Window_PreviewKeyDown;
             }
             catch (Exception ex)
             {
@@ -103,6 +106,18 @@ namespace MedicalCertificates.Views.Delete
             {
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
                 isValid = true;
+            }
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.YesButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+            else if (e.Key == Key.Escape)
+            {
+                this.Close();
             }
         }
     }

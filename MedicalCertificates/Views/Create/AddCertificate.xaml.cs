@@ -43,6 +43,7 @@ namespace MedicalCertificates.Views.Create
                 PEGroupcb.DisplayMemberPath = "Pegroup";
 
                 isValid = new bool[7] { false, false, false, false, false, false, false };
+                
             }
             catch (Exception ex)
             {
@@ -229,6 +230,19 @@ namespace MedicalCertificates.Views.Create
             var note = new SqlParameter("@Note", notetb.Text);
             
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCertificate_procedure @StudentId, @Health, @PE, @Issue, @Valid, @Note", studentId, healthId, peId, issueDate, validDate, note);
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                YesButton.Focus();
+                this.YesButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+            else if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
         }
     }
 }

@@ -5,8 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Services.Alert"
         mc:Ignorable="d"
-       Title="Сообщение" Height="260" Width="550" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
-    <Border BorderThickness="1" BorderBrush="#081724">
+       Title="Сообщение" Height="260" Width="550" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" PreviewKeyDown="Window_PreviewKeyDown"
+        AllowsTransparency="True" Background="Transparent">
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0"
+                                     To="1"
+                                     Duration="0:0:0.12">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border BorderThickness="1" BorderBrush="#081724" Background="#FFF">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -29,7 +48,7 @@
                 </Grid.RowDefinitions>
 
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-                    <TextBlock Name="Message" Padding="10 15" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" >TEXT</TextBlock>
+                    <TextBlock Name="Message" Padding="15" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" >TEXT</TextBlock>
                 </ScrollViewer>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5 0 15" VerticalAlignment="Bottom" HorizontalAlignment="Right">

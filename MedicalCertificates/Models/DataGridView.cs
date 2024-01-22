@@ -5,6 +5,7 @@ namespace MedicalCertificates.Models
 {
     public partial class DataGridView
     {
+        public long? RowNum { get; set; }
         public int StudentId { get; set; }
         public int CertificateId { get; set; }
         public string FirstName { get; set; } = null!;
