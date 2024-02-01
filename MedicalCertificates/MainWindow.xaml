@@ -58,7 +58,7 @@
         </Border>
 
         <Grid Grid.Row="1" Background="#223563">
-            <StackPanel Grid.Column="0" Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel Margin="0 0 7 0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Name="ImportButton" Style="{StaticResource ImportButton}" VerticalAlignment="Top" Click="ImportButton_Click">Импорт</Button>
                 <Button Name="UpdateButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Margin="0 0 20 0" Click="UpdateButton_Click">Обновить</Button>
                 <Button Name="AddButton" Style="{StaticResource PrimaryButton}" VerticalAlignment="Top" Click="ReportMenu_Click">
@@ -109,6 +109,15 @@
                     </Button.ContextMenu>
                 </Button>
                 <Button Name="ExportButton" Style="{StaticResource ExportButton}" VerticalAlignment="Top">PDF</Button>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                <TextBox Name="searchBox" Width="230" FontSize="18" Margin="20 0 20 0" VerticalContentAlignment="Center" Text="Поиск" Foreground="Gray" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="searchBox_TextChanged">
+                    <TextBox.ContextMenu>
+                        <ContextMenu Name="searchMenu" Width="230" Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+                <Button Style="{StaticResource PrimaryButton}">Настройки</Button>
             </StackPanel>
         </Grid>
 

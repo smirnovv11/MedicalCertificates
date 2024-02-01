@@ -38,6 +38,8 @@ namespace MedicalCertificates
         MedicalCertificatesDbContext db;
         int currGroupId;
         int currStudentId;
+        DbSet<GroupsTable> groups;
+        DbSet<StudentsTable> students;
 
         public MainWindow()
         {
@@ -51,6 +53,9 @@ namespace MedicalCertificates
                 dateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
                 cultureInfo.DateTimeFormat = dateTimeFormat;
                 Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+                groups = db.GroupsTables;
+                students = db.StudentsTables;
 
                 UpdateTreeData();
                 currStudentId = -1;
@@ -87,6 +92,24 @@ namespace MedicalCertificates
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (searchBox.Text == "Поиск")
+            {
+                searchBox.Text = "";
+                searchBox.Foreground = new SolidColorBrush(Colors.Black);
+            }
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(searchBox.Text))
+            {
+                searchBox.Text = "Поиск";
+                searchBox.Foreground = new SolidColorBrush(Colors.Gray);
+            }
         }
 
         private void ReportMenu_Click(object sender, RoutedEventArgs e)
@@ -433,5 +456,33 @@ namespace MedicalCertificates
             }
         }
 
+        private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
+            {
+                ContextMenu contextMenu = ((TextBox)sender).ContextMenu;
+                contextMenu.PlacementTarget = sender as UIElement;
+                contextMenu.Placement = PlacementMode.Bottom;
+                contextMenu.IsOpen = true;
+
+                var res = students.Select(g => g.SecondName + " " + g.FirstName + " " + g.ThirdName).Where(s => s.Contains(searchBox.Text)).
+                    Concat(groups.Select(g => Name).Where(g => g.Contains(searchBox.Text)));
+
+                foreach(string el in res)
+                {
+                    MenuItem item = new MenuItem();
+                    item.Header = el;
+                    item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
+                    contextMenu.Items.Add(item);
+                }
+
+                //searchBox.Focus();
+            }
+        }
+
+        private void OpenSearchResult()
+        {
+
+        }
     }
 }
