@@ -100,6 +100,8 @@ namespace MedicalCertificates
             {
                 searchBox.Text = "";
                 searchBox.Foreground = new SolidColorBrush(Colors.Black);
+
+                searchBox.Focus();
             }
         }
 
@@ -456,33 +458,61 @@ namespace MedicalCertificates
             }
         }
 
-        private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void searchBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
+            if (e.Key == Key.Enter)
             {
-                ContextMenu contextMenu = ((TextBox)sender).ContextMenu;
-                contextMenu.PlacementTarget = sender as UIElement;
-                contextMenu.Placement = PlacementMode.Bottom;
-                contextMenu.IsOpen = true;
-
-                var res = students.Select(g => g.SecondName + " " + g.FirstName + " " + g.ThirdName).Where(s => s.Contains(searchBox.Text)).
-                    Concat(groups.Select(g => Name).Where(g => g.Contains(searchBox.Text)));
-
-                foreach(string el in res)
+                if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
                 {
-                    MenuItem item = new MenuItem();
-                    item.Header = el;
-                    item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
-                    contextMenu.Items.Add(item);
-                }
+                    ContextMenu contextMenu = ((TextBox)sender).ContextMenu;
+                    contextMenu.PlacementTarget = sender as UIElement;
+                    contextMenu.Placement = PlacementMode.Bottom;
+                    contextMenu.IsOpen = true;
+                    contextMenu.Items.Clear();
 
-                //searchBox.Focus();
+                    var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.Contains(searchBox.Text)).ToList().
+                        Concat(groups.Select(g => g.Name).Where(g => g.Contains(searchBox.Text)).ToList()).ToList();
+
+                    foreach (string el in res)
+                    {
+                        MenuItem item = new MenuItem();
+                        item.Header = el;
+                        item.StaysOpenOnClick = true;
+                        item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
+                        contextMenu.Items.Add(item);
+
+                        item.Click += OpenSearchResult;
+                    }
+                }
             }
         }
 
-        private void OpenSearchResult()
+        private void OpenSearchResult(object sender, RoutedEventArgs e)
         {
+            string[] arr = (sender as MenuItem).Header.ToString().Split(' ');
+            if (arr.Length > 1)
+            {
+                var student = db.StudentsTables.FirstOrDefault(s => s.SecondName == arr[0]
+                && s.FirstName.StartsWith(arr[1].Substring(0, 1)) && s.ThirdName.StartsWith(arr[2].Substring(0, 1)));
+                currStudentId = student.StudentId;
+                currGroupId = -1;
 
+                UpdateGridData();
+
+                TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+            }
+            else
+            {
+                var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
+                currGroupId = group.GroupId;
+                currStudentId = -1;
+
+                UpdateGridData();
+
+                TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId)} курс)";
+            }
+            searchBox.Text = "";
+            dataGrid.Focus();
         }
     }
 }
