@@ -462,27 +462,32 @@ namespace MedicalCertificates
         {
             if (e.Key == Key.Enter)
             {
-                if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
+                SearchForTbData();
+            }
+        }
+
+        private void SearchForTbData()
+        {
+            if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
+            {
+                ContextMenu contextMenu = searchBox.ContextMenu;
+                contextMenu.PlacementTarget = searchBox as UIElement;
+                contextMenu.Placement = PlacementMode.Bottom;
+                contextMenu.IsOpen = true;
+                contextMenu.Items.Clear();
+
+                var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.Contains(searchBox.Text)).ToList().
+                    Concat(groups.Select(g => g.Name).Where(g => g.Contains(searchBox.Text)).ToList()).ToList();
+
+                foreach (string el in res)
                 {
-                    ContextMenu contextMenu = ((TextBox)sender).ContextMenu;
-                    contextMenu.PlacementTarget = sender as UIElement;
-                    contextMenu.Placement = PlacementMode.Bottom;
-                    contextMenu.IsOpen = true;
-                    contextMenu.Items.Clear();
+                    MenuItem item = new MenuItem();
+                    item.Header = el;
+                    item.StaysOpenOnClick = true;
+                    item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
+                    contextMenu.Items.Add(item);
 
-                    var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.Contains(searchBox.Text)).ToList().
-                        Concat(groups.Select(g => g.Name).Where(g => g.Contains(searchBox.Text)).ToList()).ToList();
-
-                    foreach (string el in res)
-                    {
-                        MenuItem item = new MenuItem();
-                        item.Header = el;
-                        item.StaysOpenOnClick = true;
-                        item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
-                        contextMenu.Items.Add(item);
-
-                        item.Click += OpenSearchResult;
-                    }
+                    item.Click += OpenSearchResult;
                 }
             }
         }
@@ -509,10 +514,15 @@ namespace MedicalCertificates
 
                 UpdateGridData();
 
-                TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId)} курс)";
+                TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId).Number} курс)";
             }
-            searchBox.Text = "";
+            searchBox.Clear();
             dataGrid.Focus();
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            SearchForTbData();
         }
     }
 }

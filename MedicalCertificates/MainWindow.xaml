@@ -111,12 +111,15 @@
                 <Button Name="ExportButton" Style="{StaticResource ExportButton}" VerticalAlignment="Top">PDF</Button>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                <TextBox Name="searchBox" Width="230" FontSize="18" Margin="20 0 20 0" VerticalContentAlignment="Center" Text="Поиск" Foreground="Gray" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" PreviewKeyDown="searchBox_PreviewKeyDown">
+                <TextBox Name="searchBox" Width="190" FontSize="18" Margin="20 0 0 0" VerticalContentAlignment="Center" Text="Поиск" Foreground="Gray" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" PreviewKeyDown="searchBox_PreviewKeyDown">
                     <TextBox.ContextMenu>
                         <ContextMenu Name="searchMenu" StaysOpen="True" Width="230" Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
                         </ContextMenu>
                     </TextBox.ContextMenu>
                 </TextBox>
+                <Button Name="searchBtn" Style="{StaticResource PrimaryButton}" Padding="14 10" Margin="0 0 20 0" Click="SearchButton_Click">
+                    <Image Source="/search.png" Width="16"/>
+                </Button>
                 <Button Style="{StaticResource PrimaryButton}">Настройки</Button>
             </StackPanel>
         </Grid>
