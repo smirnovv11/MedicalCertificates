@@ -57,18 +57,21 @@
                                         <ComboBox Name="departmentcb" BorderThickness="0" FontSize="16" Width="280" Padding="3" LostFocus="departmentcb_LostFocus" SelectionChanged="departmentcb_SelectionChanged">
                                         </ComboBox>
                                     </Border>
+                                    <Button Name="addDepartmentButton" Style="{StaticResource PrimaryButton}" Padding="10 0" Click="addDepartmentButton_Click">+</Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5 6 5 6">
                                     <TextBlock Name="groupLabel" FontSize="16" Width="86" VerticalAlignment="Center">Группа:</TextBlock>
                                     <Border Name="groupBox" BorderBrush="Gray" BorderThickness="1" Margin="6 0">
                                         <ComboBox Name="groupcb" FontSize="16" Width="280" Padding="3" IsEnabled="False" LostFocus="groupcb_LostFocus" SelectionChanged="groupcb_SelectionChanged"/>
                                     </Border>
+                                    <Button Name="addGroupButton" Style="{StaticResource PrimaryButton}" Padding="10 0" Click="addGroupButton_Click">+</Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5 6 5 6">
                                     <TextBlock FontSize="16" Width="86" VerticalAlignment="Center">Учащийся:</TextBlock>
                                     <Border Name="studentBox" BorderBrush="Gray" BorderThickness="1" Margin="6 0">
                                         <ComboBox Name="studentcb" FontSize="16" Width="280" Padding="3" IsEnabled="False" IsEditable="False" LostFocus="studentcb_LostFocus"/>
                                     </Border>
+                                    <Button Name="addStudentButton" Style="{StaticResource PrimaryButton}" Padding="10 0" Click="addStudentButton_Click">+</Button>
                                 </StackPanel>
                                 <StackPanel Margin="0 0 0 0">
                                     <StackPanel Orientation="Horizontal" Margin="5 6">
@@ -91,7 +94,7 @@
                         </StackPanel>
 
                         <StackPanel>
-                            <StackPanel Margin="45 0 5 0">
+                            <StackPanel Margin="25 0 5 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock FontSize="16" Width="110" VerticalAlignment="Center">Дата открытия:</TextBlock>
                                     <DatePicker Name="issueDatedp" FontSize="16" Margin="6 0" BorderThickness="1" FirstDayOfWeek="Monday" IsTodayHighlighted="False" LostFocus="issueDatedp_LostFocus"></DatePicker>

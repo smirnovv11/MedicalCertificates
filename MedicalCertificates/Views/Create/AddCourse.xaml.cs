@@ -73,7 +73,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (departmentcb.SelectedItem != null)
+            if (departmentcb.SelectedItem != null && departmentcb.SelectedIndex >= 0)
             {
                 maxCourseValue = (departmentcb.SelectedItem as DepartmentsTable).MaxCourse;
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
@@ -160,6 +160,16 @@ namespace MedicalCertificates.Views.Create
             else if (e.Key == Key.Escape)
             {
                 this.Close();
+            }
+        }
+
+        private void addDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddDepartment();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
             }
         }
     }

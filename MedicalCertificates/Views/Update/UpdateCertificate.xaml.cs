@@ -78,7 +78,7 @@ namespace MedicalCertificates.Views.Update
 
         private void healthGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (healthGroupcb.SelectedItem == null)
+            if (healthGroupcb.SelectedItem == null || healthGroupcb.SelectedIndex < 0)
             {
                 healthGroupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[0] = false;
@@ -92,7 +92,7 @@ namespace MedicalCertificates.Views.Update
 
         private void PEGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (PEGroupcb.SelectedItem == null)
+            if (PEGroupcb.SelectedItem == null || PEGroupcb.SelectedIndex < 0)
             {
                 PEGroupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[1] = false;

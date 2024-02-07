@@ -94,7 +94,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (departmentcb.SelectedIndex != null)
+            if (departmentcb.SelectedIndex != null && departmentcb.SelectedIndex >= 0)
             {
                 groupcb.IsEnabled = true;
                 groupcb.ItemsSource = db.GroupsTables
@@ -107,7 +107,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (departmentcb.SelectedItem == null)
+            if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
             {
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[4] = false;
@@ -121,7 +121,7 @@ namespace MedicalCertificates.Views.Create
 
         private void groupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (groupcb.SelectedItem == null)
+            if (groupcb.SelectedItem == null || groupcb.SelectedIndex < 0)
             {
                 groupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[5] = false;
@@ -180,6 +180,31 @@ namespace MedicalCertificates.Views.Create
             else if (e.Key == Key.Escape)
             {
                 this.Close();
+            }
+        }
+
+        private void addDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddDepartment();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+            }
+        }
+        private void addGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddGroup();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                if (departmentcb.SelectedIndex >= 0)
+                {
+                    groupcb.IsEnabled = true;
+                    groupcb.ItemsSource = db.GroupsTables
+                        .Where(g => g.Course.Department.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
+                    groupcb.DisplayMemberPath = "Name";
+                }
             }
         }
     }

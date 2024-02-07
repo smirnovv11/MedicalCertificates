@@ -66,7 +66,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (departmentcb.SelectedItem != null)
+            if (departmentcb.SelectedItem != null && departmentcb.SelectedIndex >= 0)
             {
                 maxCourseValue = (departmentcb.SelectedItem as DepartmentsTable).MaxCourse;
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
@@ -86,7 +86,7 @@ namespace MedicalCertificates.Views.Create
 
         private void coursecb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (coursecb.SelectedItem != null)
+            if (coursecb.SelectedItem != null && coursecb.SelectedIndex >= 0)
             {
                 courseBox.BorderBrush = new SolidColorBrush(Colors.Gray);
                 isValid[1] = true;
@@ -154,6 +154,30 @@ namespace MedicalCertificates.Views.Create
             else if (e.Key == Key.Escape)
             {
                 this.Close();
+            }
+        }
+
+        private void addDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddDepartment();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+            }
+        }
+        private void addCourseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddCourse();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                if (departmentcb.SelectedIndex >= 0)
+                {
+                    coursecb.IsEnabled = true;
+                    coursecb.ItemsSource = db.CoursesTables.Where(c => c.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
+                    coursecb.DisplayMemberPath = "Number";
+                }
             }
         }
     }

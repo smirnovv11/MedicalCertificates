@@ -52,6 +52,7 @@
                         <Border Name="departmentBox" Margin="6 0" BorderThickness="1" BorderBrush="Gray">
                             <ComboBox Name="departmentcb" FontSize="16" Width="250" Padding="3" BorderThickness="0" SelectionChanged="departmentcb_SelectionChanged"/>
                         </Border>
+                        <Button Name="addDepartmentButton" Style="{StaticResource PrimaryButton}" Padding="10 0" Click="addDepartmentButton_Click">+</Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5 6">
                         <TextBlock FontSize="16" Width="100" VerticalAlignment="Center">Номер курса:</TextBlock>

@@ -70,7 +70,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (departmentcb.SelectedIndex != null)
+            if (departmentcb.SelectedIndex != null && departmentcb.SelectedIndex >= 0)
             {
                 groupcb.IsEnabled = true;
                 groupcb.ItemsSource = db.GroupsTables
@@ -83,7 +83,7 @@ namespace MedicalCertificates.Views.Create
 
         private void departmentcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (departmentcb.SelectedItem == null)
+            if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
             {
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[0] = false;
@@ -97,7 +97,7 @@ namespace MedicalCertificates.Views.Create
 
         private void groupcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (studentcb.SelectedIndex != null)
+            if (groupcb.SelectedIndex != null && groupcb.SelectedIndex >= 0)
             {
                 studentcb.IsEnabled = true;
                 studentcb.ItemsSource = db.StudentsTables
@@ -111,7 +111,7 @@ namespace MedicalCertificates.Views.Create
 
         private void groupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (groupcb.SelectedItem == null)
+            if (groupcb.SelectedItem == null || groupcb.SelectedIndex < 0)
             {
                 groupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[1] = false;
@@ -125,7 +125,7 @@ namespace MedicalCertificates.Views.Create
 
         private void studentcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (studentcb.SelectedItem == null)
+            if (studentcb.SelectedItem == null || studentcb.SelectedIndex < 0)
             {
                 studentcb.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[2] = false;
@@ -139,7 +139,7 @@ namespace MedicalCertificates.Views.Create
 
         private void healthGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (healthGroupcb.SelectedItem == null)
+            if (healthGroupcb.SelectedItem == null || healthGroupcb.SelectedIndex < 0)
             {
                 healthGroupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[3] = false;
@@ -153,7 +153,7 @@ namespace MedicalCertificates.Views.Create
 
         private void PEGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (PEGroupcb.SelectedItem == null)
+            if (PEGroupcb.SelectedItem == null || PEGroupcb.SelectedIndex < 0)
             {
                 PEGroupBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 isValid[4] = false;
@@ -242,6 +242,49 @@ namespace MedicalCertificates.Views.Create
             else if (e.Key == Key.Escape)
             {
                 this.Close();
+            }
+        }
+
+        private void addDepartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddDepartment();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+            }
+        }
+
+        private void addGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddGroup();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                if (departmentcb.SelectedIndex >= 0)
+                {
+                    groupcb.IsEnabled = true;
+                    groupcb.ItemsSource = db.GroupsTables
+                        .Where(g => g.Course.Department.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
+                    groupcb.DisplayMemberPath = "Name";
+                }
+            }
+        }
+
+        private void addStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new AddStudent();
+            if (wind.ShowDialog() == true)
+            {
+                db = new MedicalCertificatesDbContext();
+                if (groupcb.SelectedIndex >= 0)
+                {
+                    studentcb.IsEnabled = true;
+                    studentcb.ItemsSource = db.StudentsTables
+                        .Where(s => s.GroupId == (groupcb.SelectedItem as GroupsTable).GroupId)
+                        .OrderBy(s => s.SecondName)
+                        .Select(p => $"{p.SecondName} {p.FirstName} {p.ThirdName}").ToList();
+                }
             }
         }
     }
