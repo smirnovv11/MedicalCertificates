@@ -108,7 +108,6 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-                <Button Name="ExportButton" Style="{StaticResource ExportButton}" VerticalAlignment="Top">PDF</Button>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
                 <TextBox Name="searchBox" Width="190" FontSize="18" Margin="20 0 0 0" VerticalContentAlignment="Center" Text="Поиск" Foreground="Gray" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" PreviewKeyDown="searchBox_PreviewKeyDown">

@@ -435,8 +435,8 @@ namespace MedicalCertificates
                             var studentParam = new SqlParameter("@StudentId", studentId);
                             var healthId = new SqlParameter("@Health", 1);
                             var peId = new SqlParameter("@PE", 1);
-                            var issueDate = new SqlParameter("@Issue", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()));
-                            var validDate = new SqlParameter("@Valid", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()).AddMonths(1));
+                            var issueDate = new SqlParameter("@Issue", DateTime.Parse(worksheet.Cell(row, 5).GetValue<String>()));
+                            var validDate = new SqlParameter("@Valid", DateTime.Parse(worksheet.Cell(row, 6).GetValue<String>()));
                             var note = new SqlParameter("@Note", "");
 
                             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCertificate_procedure @StudentId, @Health, @PE, @Issue, @Valid, @Note", studentParam, healthId, peId, issueDate, validDate, note);

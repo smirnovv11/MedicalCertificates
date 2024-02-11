@@ -147,9 +147,18 @@ namespace MedicalCertificates.Views.Create
             {
                 AddStudentToDb();
 
-                var alert = new Alert("Добавление", "Учащийся добавлен.");
-                alert.ShowDialog();
                 this.DialogResult = true;
+
+                var askAlert = new AcceptAlert("Добавление справки", "Учащийся добавлен. Добавить справку для нового учащегося?", AlertType.Info);
+                if (askAlert.ShowDialog() == true)
+                {
+                    db = new MedicalCertificatesDbContext();
+                    StudentsTable student = db.StudentsTables.First(s => s.FirstName == firstNametb2.Text && s.SecondName == secondNametb1.Text && s.ThirdName == thirdNametb3.Text);
+
+                    var addCert = new AddCertificate(student);
+                    addCert.ShowDialog();
+                }
+
                 Close();
             }
             catch (Exception ex)

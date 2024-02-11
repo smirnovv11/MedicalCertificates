@@ -51,6 +51,25 @@ namespace MedicalCertificates.Views.Create
                 alert.ShowDialog();
             }
         }
+        public AddCertificate(StudentsTable student) : this()
+        {
+            groupcb.IsEnabled = true;
+            studentcb.IsEnabled = true;
+
+            var group = db.GroupsTables.First(g => g.GroupId == student.GroupId);
+            var dep = db.DepartmentsTables.First(d => d.DepartmentId
+            == db.CoursesTables.First(c => c.CourseId == group.CourseId).DepartmentId);
+            var studentDb = db.StudentsTables.First(s => s.StudentId == student.StudentId);
+
+            departmentcb.SelectedIndex = departmentcb.Items.IndexOf(dep);
+            isValid[0] = true;
+
+            groupcb.SelectedIndex = groupcb.Items.IndexOf(group);
+            isValid[1] = true;
+
+            studentcb.SelectedIndex = studentcb.Items.IndexOf(student.SecondName + " " + student.FirstName + " " + student.ThirdName);
+            isValid[2] = true;
+        }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
