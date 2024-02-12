@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Views.Update"
         mc:Ignorable="d"
-        Title="Изменение" Height="360" Width="770" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" WindowStyle="None"        AllowsTransparency="True" Background="Transparent">
+        Title="Изменение" Height="390" Width="820" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" WindowStyle="None"        AllowsTransparency="True" Background="Transparent">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
@@ -71,7 +71,7 @@
                         </StackPanel>
 
                         <StackPanel>
-                            <StackPanel Margin="25 0 5 0">
+                            <StackPanel Margin="40 0 5 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock FontSize="16" Width="110" VerticalAlignment="Center">Дата открытия:</TextBlock>
                                     <DatePicker Name="issueDatedp" FontSize="16" Margin="6 0" BorderThickness="1" FirstDayOfWeek="Monday" IsTodayHighlighted="False" LostFocus="issueDatedp_LostFocus"></DatePicker>
@@ -79,13 +79,19 @@
                                 <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                                     <TextBlock FontSize="16" Width="110" VerticalAlignment="Center">Годна до:</TextBlock>
                                     <DatePicker Name="validDatedp" FontSize="16" Margin="6 0" BorderThickness="1" FirstDayOfWeek="Monday" IsTodayHighlighted="False" LostFocus="validDatedp_LostFocus"></DatePicker>
+                                    <Button Name="clearValidDateButton" Style="{StaticResource PrimaryButton}" Padding="10 0" Click="clearValidDateButton_Click">x</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0 12 0 10">
+                                    <Button x:Name="addYear" Style="{StaticResource NoteButton}" Padding="12 5" Margin="0 0 6 0" Click="addYear_Click">+12 мес.</Button>
+                                    <Button x:Name="add6Month" Style="{StaticResource NoteButton}" Padding="12 5" Margin="0 0 6 0" Click="add6Month_Click">+6 мес.</Button>
+                                    <Button x:Name="add3Month" Style="{StaticResource NoteButton}" Padding="12 5" Margin="0 0 6 0" Click="add3Month_Click">+3 мес.</Button>
                                 </StackPanel>
                             </StackPanel>
 
                         </StackPanel>
                     </StackPanel>
                     <StackPanel>
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="5 6">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5 6">
                             <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left">Примечание:</TextBlock>
                             <TextBox Name="notetb" FontSize="16" Width="400" Height="100" TextWrapping="Wrap" MaxLength="4000" Margin="0 4 0 0" Padding="3"/>
                         </StackPanel>

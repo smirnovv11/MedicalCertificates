@@ -247,6 +247,11 @@ namespace MedicalCertificates
         private void CertificateAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddCertificate();
+            if (currStudentId >= 0)
+            {
+                wind = new AddCertificate(db.StudentsTables.First(s => s.StudentId == currStudentId));
+            }
+
             if (wind.ShowDialog() == true)
                 UpdateGridData();
         }

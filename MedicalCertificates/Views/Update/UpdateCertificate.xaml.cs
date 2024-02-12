@@ -187,5 +187,34 @@ namespace MedicalCertificates.Views.Update
                 this.Close();
             }
         }
+
+        private void clearValidDateButton_Click(object sender, RoutedEventArgs e)
+        {
+            validDatedp.SelectedDate = null;
+        }
+
+        private void addYear_Click(object sender, RoutedEventArgs e)
+        {
+            if (issueDatedp.SelectedDate != null)
+            {
+                validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(12);
+            }
+        }
+
+        private void add6Month_Click(object sender, RoutedEventArgs e)
+        {
+            if (issueDatedp.SelectedDate != null)
+            {
+                validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(6);
+            }
+        }
+
+        private void add3Month_Click(object sender, RoutedEventArgs e)
+        {
+            if (issueDatedp.SelectedDate != null)
+            {
+                validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(3);
+            }
+        }
     }
 }
