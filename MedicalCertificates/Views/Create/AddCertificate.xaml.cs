@@ -226,8 +226,6 @@ namespace MedicalCertificates.Views.Create
             {
                 AddStudentToDb();
 
-                var alert = new Alert("Добавление", "Мед. справка добавлена.");
-                alert.ShowDialog();
                 this.DialogResult = true;
                 Close();
             }
@@ -310,6 +308,7 @@ namespace MedicalCertificates.Views.Create
         private void clearValidDateButton_Click(object sender, RoutedEventArgs e)
         {
             validDatedp.SelectedDate = null;
+            isValid[6] = false;
         }
 
         private void addYear_Click(object sender, RoutedEventArgs e)
@@ -318,6 +317,7 @@ namespace MedicalCertificates.Views.Create
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(12);
             }
+            isValid[6] = true;
         }
 
         private void add6Month_Click(object sender, RoutedEventArgs e)
@@ -326,6 +326,7 @@ namespace MedicalCertificates.Views.Create
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(6);
             }
+            isValid[6] = true;
         }
 
         private void add3Month_Click(object sender, RoutedEventArgs e)
@@ -334,6 +335,7 @@ namespace MedicalCertificates.Views.Create
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(3);
             }
+            isValid[6] = true;
         }
     }
 }

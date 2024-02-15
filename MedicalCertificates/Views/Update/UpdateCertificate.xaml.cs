@@ -191,6 +191,7 @@ namespace MedicalCertificates.Views.Update
         private void clearValidDateButton_Click(object sender, RoutedEventArgs e)
         {
             validDatedp.SelectedDate = null;
+            isValid[3] = false;
         }
 
         private void addYear_Click(object sender, RoutedEventArgs e)
@@ -199,6 +200,7 @@ namespace MedicalCertificates.Views.Update
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(12);
             }
+            isValid[3] = true;
         }
 
         private void add6Month_Click(object sender, RoutedEventArgs e)
@@ -207,6 +209,7 @@ namespace MedicalCertificates.Views.Update
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(6);
             }
+            isValid[3] = true;
         }
 
         private void add3Month_Click(object sender, RoutedEventArgs e)
@@ -215,6 +218,7 @@ namespace MedicalCertificates.Views.Update
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(3);
             }
+            isValid[3] = true;
         }
     }
 }
