@@ -27,6 +27,7 @@ using Microsoft.Win32;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using System.Data;
+using System.IO;
 
 namespace MedicalCertificates
 {
@@ -45,6 +46,13 @@ namespace MedicalCertificates
         {
             try
             {
+                var jsonPath = "settings.json";
+                if (!File.Exists(jsonPath))
+                {
+                    JsonServices.Write("dbname", "DESKTOP-UTKFT1Q\\SQLEXPRESS");
+                    JsonServices.Write("warningPeriod", "3");
+                }
+
                 db = new MedicalCertificatesDbContext();
                 InitializeComponent();
 
@@ -61,6 +69,7 @@ namespace MedicalCertificates
                 currStudentId = -1;
 
                 TableLabel.Text = "Выберите группу или учащегося для просмотра информации";
+
             }
             catch (Exception ex)
             {
@@ -250,6 +259,11 @@ namespace MedicalCertificates
             if (currStudentId >= 0)
             {
                 wind = new AddCertificate(db.StudentsTables.First(s => s.StudentId == currStudentId));
+            }
+            
+            if (currGroupId >= 0)
+            {
+                wind = new AddCertificate(db.GroupsTables.First(s => s.GroupId == currGroupId));
             }
 
             if (wind.ShowDialog() == true)
