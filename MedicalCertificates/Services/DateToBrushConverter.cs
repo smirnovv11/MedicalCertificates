@@ -14,13 +14,15 @@ namespace MedicalCertificates.Services
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            int period = Int32.Parse(JsonServices.ReadByProperty("warningPeriod"));
+
             if (value is DateTime date)
             {
                 if (date <= DateTime.Now)
                 {
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b00c00"));
                 }
-                else if (date <= DateTime.Now.AddMonths(3))
+                else if (date <= DateTime.Now.AddMonths(period))
                 {
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ebb434"));
                 }

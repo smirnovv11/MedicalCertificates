@@ -28,6 +28,7 @@ using ClosedXML.Excel;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using System.Data;
 using System.IO;
+using MedicalCertificates.Views.Settings;
 
 namespace MedicalCertificates
 {
@@ -67,6 +68,7 @@ namespace MedicalCertificates
 
                 UpdateTreeData();
                 currStudentId = -1;
+                currGroupId = -1;
 
                 TableLabel.Text = "Выберите группу или учащегося для просмотра информации";
 
@@ -542,6 +544,15 @@ namespace MedicalCertificates
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             SearchForTbData();
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wind = new Settings();
+            if (wind.ShowDialog() == true)
+            {
+                UpdateAllDbData();
+            }
         }
     }
 }

@@ -119,7 +119,7 @@
                 <Button Name="searchBtn" Style="{StaticResource PrimaryButton}" Padding="14 10" Margin="0 0 20 0" Click="SearchButton_Click">
                     <Image Source="/search.png" Width="16"/>
                 </Button>
-                <Button Style="{StaticResource PrimaryButton}">Настройки</Button>
+                <Button Style="{StaticResource PrimaryButton}" Click="SettingsButton_Click">Настройки</Button>
             </StackPanel>
         </Grid>
 

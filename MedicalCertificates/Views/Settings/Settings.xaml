@@ -5,8 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Views.Settings"
         mc:Ignorable="d"
-        Title="Settings" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Настройки" Height="550" Width="530" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" PreviewKeyDown="Window_PreviewKeyDown"
+        AllowsTransparency="True" Background="Transparent">
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0"
+                                     To="1"
+                                     Duration="0:0:0.12">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border BorderThickness="1" BorderBrush="#081724" Background="#FFF">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Name="Back" Background="#131f3b" MouseDown="Grid_MouseDown">
+                <Label Name="Title" Foreground="White" HorizontalAlignment="Center"
+                   FontSize="18"
+                   Margin="20 5">Настройки</Label>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="ExitButton" Style="{StaticResource ExitButton}"  VerticalContentAlignment="Center" Click="ExitButton_Click">x</Button>
+                </StackPanel>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 24">
+                    <GroupBox Header="Подключение к базе данных" Padding="4 8 4 4" FontSize="13">
+                        <StackPanel>
+                            <Label FontSize="16">Имя сервера:</Label>
+                            <TextBox Name="dbnameTb" FontSize="16" Width="440" MaxLength="20" Margin="5 0" Padding="3"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Предпочтения" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
+                        <StackPanel>
+                            <Label FontSize="16">Период выделения до завершения срока справки:</Label>
+                            <ComboBox Name="warningPeriodCb" Width="200" FontSize="16" Margin="5 0" HorizontalAlignment="Left">
+                                <ComboBoxItem>1 месяц</ComboBoxItem>
+                                <ComboBoxItem IsSelected="True">3 месяца</ComboBoxItem>
+                                <ComboBoxItem>4 месяца</ComboBoxItem>
+                                <ComboBoxItem>6 месяцев</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2" VerticalAlignment="Bottom" Margin="10" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="saveBtn" Style="{StaticResource PrimaryButton}" Margin="6 0 6 0" Click="saveBtn_Click">Сохранить</Button>
+                <Button x:Name="cancelBtn" Style="{StaticResource PrimaryButton}" Margin="6 0 6 0" Click="ExitButton_Click">Отмена</Button>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

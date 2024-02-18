@@ -4,8 +4,6 @@ using System.IO;
 using MedicalCertificates.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace MedicalCertificates.Models
 {
