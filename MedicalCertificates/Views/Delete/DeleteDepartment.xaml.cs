@@ -88,6 +88,12 @@ namespace MedicalCertificates.Views.Delete
 
         private void DeleteDepartmentFromDb()
         {
+            if ((departmentscb.SelectedItem as DepartmentsTable).DepartmentId == 1) {
+                var alert = new Alert("Ошибка!", "Ошибка: Запрещено удалять данное отделение", AlertType.Error);
+                alert.ShowDialog();
+                return;
+            }
+
             var dep = new SqlParameter("@Dep", (departmentscb.SelectedItem as DepartmentsTable).DepartmentId);
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteDepartment_procedure @Dep", dep);

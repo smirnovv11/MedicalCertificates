@@ -90,6 +90,13 @@ namespace MedicalCertificates.Views.Delete
 
         private void DeleteDepartmentFromDb()
         {
+            if ((groupcb.SelectedItem as GroupsTable).GroupId == 1)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: Запрещено удалять данную группу", AlertType.Error);
+                alert.ShowDialog();
+                return;
+            }
+
             var id = new SqlParameter("@Id", (groupcb.SelectedItem as GroupsTable).GroupId);
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteGroup_procedure @Id", id);

@@ -65,8 +65,8 @@
             </ScrollViewer>
 
             <StackPanel Grid.Row="2" VerticalAlignment="Bottom" Margin="10" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button x:Name="saveBtn" Style="{StaticResource PrimaryButton}" Margin="6 0 6 0" Click="saveBtn_Click">Сохранить</Button>
                 <Button x:Name="cancelBtn" Style="{StaticResource PrimaryButton}" Margin="6 0 6 0" Click="ExitButton_Click">Отмена</Button>
+                <Button x:Name="saveBtn" Style="{StaticResource PrimaryButton}" Margin="6 0 6 0" Click="saveBtn_Click">Сохранить</Button>
             </StackPanel>
         </Grid>
     </Border>

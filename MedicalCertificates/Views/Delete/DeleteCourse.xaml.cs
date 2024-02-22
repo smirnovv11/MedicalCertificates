@@ -90,6 +90,13 @@ namespace MedicalCertificates.Views.Delete
 
         private void DeleteDepartmentFromDb()
         {
+            if ((coursecb.SelectedItem as CoursesTable).CourseId == 1)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: Запрещено удалять данный курс", AlertType.Error);
+                alert.ShowDialog();
+                return;
+            }
+
             var id = new SqlParameter("@Id", (coursecb.SelectedItem as CoursesTable).CourseId);
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC DeleteCourse_procedure @Id", id);
