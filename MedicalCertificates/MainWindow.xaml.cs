@@ -133,15 +133,24 @@ namespace MedicalCertificates
             contextMenu.IsOpen = true;
         }
 
-        private void UpdateAllDbData()
+        private void UpdateAllDbData(bool foreceUpdate = false)
         {
-            UpdateTreeData();
+            UpdateTreeData(true);
             UpdateGridData();
         }
 
-        private void UpdateTreeData()
+        private void UpdateTreeData(bool forceUpdate = false)
         {
-            if (currGroupId != null && currGroupId >= 0)
+            if (forceUpdate)
+            {
+                db = new MedicalCertificatesDbContext();
+                TreeMenu.ItemsSource = db.DepartmentsTables
+                              .Include(d => d.CoursesTables.OrderBy(c => c.Number))
+                              .ThenInclude(c => c.GroupsTables)
+                              .ThenInclude(g => g.StudentsTables.OrderBy(s => s.SecondName).ThenBy(s => s.FirstName))
+                              .ToList();
+            }
+            else if (currGroupId != null && currGroupId >= 0)
             {
                 db = new MedicalCertificatesDbContext();
                 TreeMenu.ItemsSource = db.DepartmentsTables
@@ -235,25 +244,25 @@ namespace MedicalCertificates
         {
             var wind = new AddStudent();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
         private void DepartmentAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddDepartment();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
         private void CourseAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddCourse();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
         private void GroupAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddGroup();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
         private void CertificateAddition_Click(object sender, RoutedEventArgs e)
         {
@@ -319,21 +328,21 @@ namespace MedicalCertificates
         {
             var wind = new DeleteDepartment();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         private void DeleteCourse_Click(object sender, RoutedEventArgs e)
         {
             var wind = new DeleteCourse();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         private void DeleteGroup_Click(object sender, RoutedEventArgs e)
         {
             var wind = new DeleteGroup();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         #endregion
@@ -344,21 +353,21 @@ namespace MedicalCertificates
         {
             var wind = new UpdateDepartment();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         private void UpdateCourse_Click(object sender, RoutedEventArgs e)
         {
             var wind = new UpdateCourse();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         private void UpdateGroup_Click(object sender, RoutedEventArgs e)
         {
             var wind = new UpdateGroup();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData();
+                UpdateAllDbData(true);
         }
 
         private void UpdateStudentButton_Click(object sender, RoutedEventArgs e)
@@ -497,8 +506,8 @@ namespace MedicalCertificates
                 contextMenu.IsOpen = true;
                 contextMenu.Items.Clear();
 
-                var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.Contains(searchBox.Text)).ToList().
-                    Concat(groups.Select(g => g.Name).Where(g => g.Contains(searchBox.Text)).ToList()).ToList();
+                var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.ToLower().Contains(searchBox.Text.ToLower())).ToList().
+                    Concat(groups.Select(g => g.Name).Where(g => g.ToLower().Contains(searchBox.Text.ToLower())).ToList()).ToList();
 
                 foreach (string el in res)
                 {
