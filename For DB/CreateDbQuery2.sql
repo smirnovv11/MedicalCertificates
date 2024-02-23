@@ -172,7 +172,7 @@ INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
 
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
 --UPDATE Courses_table SET Number = 99 WHERE CourseId = 9
-INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (2, 2, '2023') 
+INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (4, 2, '2023') 
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-341', 2)
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-342', 2)
 INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
@@ -261,13 +261,11 @@ CREATE PROCEDURE UpdateCourseYear_procedure
 AS
 BEGIN
 	DELETE Courses_table
-		WHERE Number + 1 > (SELECT MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = CourseId)
-	UPDATE Courses_table SET Number = Number + 1, Year = Year + 1
+		WHERE Number + 1 > (SELECT TOP 1 MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = Courses_table.DepartmentId)
+	UPDATE Courses_table SET Number = Number + 1
 END
 
 EXEC UpdateCourseYear_procedure
-
-
 
 
 
