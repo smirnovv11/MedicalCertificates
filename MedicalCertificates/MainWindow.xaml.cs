@@ -29,6 +29,7 @@ using DocumentFormat.OpenXml.ExtendedProperties;
 using System.Data;
 using System.IO;
 using MedicalCertificates.Views.Settings;
+using MedicalCertificates.Views.Report;
 
 namespace MedicalCertificates
 {
@@ -562,6 +563,25 @@ namespace MedicalCertificates
             {
                 UpdateAllDbData();
             }
+        }
+
+        private void GroupReport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenReportSettings(ReportType.Group);
+        }
+        private void CourseReport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenReportSettings(ReportType.Course);
+        }
+        private void DepartmentReport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenReportSettings(ReportType.Department);
+        }
+
+        private void OpenReportSettings(ReportType type)
+        {
+            var wind = new ReportSettings(type);
+            wind.ShowDialog();
         }
     }
 }
