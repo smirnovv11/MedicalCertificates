@@ -29,6 +29,8 @@ namespace MedicalCertificates.Views.Report
             InitializeComponent();
 
             db = new MedicalCertificatesDbContext();
+            departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+            departmentcb.DisplayMemberPath = "Name";
             isValid = new bool[5] { true, true, false, true, true };
         }
 
@@ -55,31 +57,25 @@ namespace MedicalCertificates.Views.Report
             }
         }
 
-        private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (departmentcb.SelectedIndex != null && departmentcb.SelectedIndex >= 0)
-            //{
-            //    groupcb.IsEnabled = true;
-            //    groupcb.ItemsSource = db.GroupsTables
-            //        .Where(g => g.Course.Department.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
-            //    groupcb.DisplayMemberPath = "Name";
-            //}
-            //else
-            //    groupcb.IsEnabled = false;
-        }
-
         private void departmentcb_LostFocus(object sender, RoutedEventArgs e)
         {
-            //if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
-            //{
-            //    departmentBox.BorderBrush = new SolidColorBrush(Colors.Red);
-            //    isValid[4] = false;
-            //}
-            //else
-            //{
-            //    departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
-            //    isValid[4] = true;
-            //}
+            if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
+            {
+                departmentBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                isValid[2] = false;
+
+                courseCb.IsEnabled = false;
+            }
+            else
+            {
+                departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
+                isValid[2] = true;
+
+                courseCb.IsEnabled = true;
+                courseCb.ItemsSource = db.CoursesTables.Where(c => c.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId)
+                    .ToList();
+                courseCb.DisplayMemberPath = "Number";
+            }
         }
 
         private void coursecb_LostFocus(object sender, RoutedEventArgs e)
@@ -117,7 +113,42 @@ namespace MedicalCertificates.Views.Report
 
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            foreach (var el in isValid)
+                if (!el)
+                {
+                    var alert = new Alert("Ошибка!", "Не все поля заполены или введеные значения неверны.", AlertType.Error);
+                    alert.ShowDialog();
+                    return;
+                }
+
+            Close();
+        }
+
+        private void endDateCb_Checked_1(object sender, RoutedEventArgs e)
+        {
+            birthDatedp.IsEnabled = true;
+            isValid[1] = false;
+        }
+
+        private void endDateCb_Unchecked(object sender, RoutedEventArgs e)
+        {
+            birthDatedp.IsEnabled = false;
+            birthDatedp.SelectedDate = null;
+            isValid[1] = true;
+        }
+
+        private void birthDatedp_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (birthDatedp.SelectedDate > DateTime.Now)
+            {
+                isValid[1] = true;
+                birthDatedp.BorderBrush = new SolidColorBrush(Colors.Gray);
+            }
+            else
+            {
+                isValid[1] = false;
+                birthDatedp.BorderBrush = new SolidColorBrush(Colors.Red);
+            }
         }
     }
 }
