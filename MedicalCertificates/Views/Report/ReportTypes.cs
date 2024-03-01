@@ -10,6 +10,7 @@ namespace MedicalCertificates.Views.Report
     {
         Group,
         Course,
-        Department
+        Department,
+        TotalReport
     }
 }

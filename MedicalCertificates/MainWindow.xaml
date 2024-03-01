@@ -100,10 +100,11 @@
                 <Button Name="ReportButton" Style="{StaticResource PrimaryButton}" Click="ReportMenu_Click" VerticalAlignment="Top">Отчеты
                     <Button.ContextMenu>
                         <ContextMenu Background="Black" BorderThickness="0 0 0 1" BorderBrush="Black" Padding="0">
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам" Click="GroupReport_Click"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по отделениям"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделения"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по отделениям" Click="AllReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам" Click="DepartmentReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам" Click="CourseReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группе" Click="GroupReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделений"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы"/>
                         </ContextMenu>
                     </Button.ContextMenu>

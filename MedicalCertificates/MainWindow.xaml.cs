@@ -136,8 +136,16 @@ namespace MedicalCertificates
 
         private void UpdateAllDbData(bool foreceUpdate = false)
         {
-            UpdateTreeData(true);
-            UpdateGridData();
+            try
+            {
+                UpdateTreeData(true);
+                UpdateGridData();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void UpdateTreeData(bool forceUpdate = false)
@@ -170,7 +178,7 @@ namespace MedicalCertificates
                 db = new MedicalCertificatesDbContext();
                 var group = new SqlParameter("@GroupId", currGroupId);
 
-                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure 2024, @GroupId", group).ToList();
+                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @GroupId", group).ToList();
             }
             else if (currStudentId != null && currStudentId >= 0)
             {
@@ -576,6 +584,11 @@ namespace MedicalCertificates
         private void DepartmentReport_Click(object sender, RoutedEventArgs e)
         {
             OpenReportSettings(ReportType.Department);
+        }
+
+        private void AllReport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenReportSettings(ReportType.TotalReport);
         }
 
         private void OpenReportSettings(ReportType type)

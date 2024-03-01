@@ -220,7 +220,7 @@ SELECT * FROM StudentsCertificates_view WHERE StudentId = 3
 
 DROP PROCEDURE IF EXISTS ReceiveStudentsGroup_procedure
 GO
-CREATE PROCEDURE ReceiveStudentsGroup_procedure @Year NVARCHAR(5), @GroupId INT
+CREATE PROCEDURE ReceiveStudentsGroup_procedure @GroupId INT
 AS
 BEGIN
 	WITH RankedCertificates AS (
@@ -232,19 +232,6 @@ BEGIN
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 			WHERE s.GroupId = @GroupId
-			--WHERE ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND s.GroupId = @GroupId
-	--UNION
-	--	SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
-	--		   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
-	--	FROM Students_table AS s
-	--	JOIN Certificates_table as c ON c.StudentId = s.StudentId
-	--	JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
-	--	JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
-	--	JOIN StudentsGroupArchive_table AS sa ON sa.StudentId = s.StudentId
-	--	JOIN Groups_table AS g ON g.GroupId = s.GroupId
-			--WHERE sa.Year = @Year AND ValidDate > '30-08-' + CAST(@Year AS VARCHAR) AND IssueDate < '01-08-' + CAST((@Year + 1) AS VARCHAR) AND sa.OldGroupId = @GroupId
-		--TODO: Если он был в 2х разных группах или просто глянуть инфу за 2+ года назад то оно не приравняет Year
-	
 	)
 	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
@@ -253,7 +240,73 @@ BEGIN
 END
 GO
 
-EXEC ReceiveStudentsGroup_procedure '2023', 1
+EXEC ReceiveStudentsGroup_procedure 1
+
+DROP PROCEDURE IF EXISTS ReceiveStudentsCourse_procedure
+GO
+CREATE PROCEDURE ReceiveStudentsCourse_procedure @CourseId INT
+AS
+BEGIN
+	WITH RankedCertificates AS (
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
+		FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+			WHERE g.CourseId = @CourseId
+	)
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	FROM RankedCertificates
+	WHERE rn = 1
+	ORDER BY SecondName ASC, FirstName ASC
+END
+GO
+
+DROP PROCEDURE IF EXISTS ReceiveStudentsDepartment_procedure
+GO
+CREATE PROCEDURE ReceiveStudentsDepartment_procedure @DepartmentId INT
+AS
+BEGIN
+	WITH RankedCertificates AS (
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
+		FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+		JOIN Courses_table as cr ON cr.CourseId = g.CourseId
+			WHERE cr.DepartmentId = @DepartmentId
+	)
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	FROM RankedCertificates
+	WHERE rn = 1
+	ORDER BY SecondName ASC, FirstName ASC
+END
+GO
+
+DROP PROCEDURE IF EXISTS ReceiveStudents_procedure
+GO
+CREATE PROCEDURE ReceiveStudents_procedure
+AS
+BEGIN
+	WITH RankedCertificates AS (
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
+		FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+	)
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	FROM RankedCertificates
+	WHERE rn = 1
+	ORDER BY SecondName ASC, FirstName ASC
+END
+GO
 
 DROP PROCEDURE IF EXISTS UpdateCourseYear_procedure
 GO
