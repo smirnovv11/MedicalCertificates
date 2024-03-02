@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,13 +93,12 @@ namespace MedicalCertificates.Views.Settings
 
         private void ExportLogs_Click(object sender, RoutedEventArgs e)
         {
-            var path = ShowSaveFileDialog();
-            var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
-            BackupDatabase(conn, "MedicalCertificatesDb", path);
-            BackupLog(conn, "MedicalCertificatesDb", path);
             try
             {
-                
+                var path = ShowSaveFileDialog();
+                var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
+                BackupDatabase(conn, "MedicalCertificatesDb", path);
+                BackupLog(conn, "MedicalCertificatesDb", path);
             }
             catch (Exception ex)
             {
@@ -148,7 +148,56 @@ namespace MedicalCertificates.Views.Settings
 
         private void ImportLog_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                var path = ShowOpenFileDialog();
+                var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
 
+                ImportLogToDatabase(conn, path);
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
+        }
+
+        private static string ShowOpenFileDialog()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Log Files (*.log)|*.log";
+            openFileDialog.DefaultExt = "log";
+            bool? dialogOK = openFileDialog.ShowDialog();
+            if (dialogOK == true)
+            {
+                return openFileDialog.FileName;
+            }
+            return null;
+        }
+
+        private static void ImportLogToDatabase(string connectionString, string logFilePath)
+        {
+            string[] logLines = File.ReadAllLines(logFilePath);
+            //using (var conn = new SqlConnection(connectionString))
+            //{
+            //    conn.Open();
+            //    foreach (string logLine in logLines)
+            //    {
+            //        string[] logParts = logLine.Split(',');
+            //        int logId = int.Parse(logParts[0]);
+            //        DateTime logDate = DateTime.Parse(logParts[1]);
+            //        string logMessage = logParts[2];
+
+            //        string insertCommand = "INSERT INTO " + tableName + " (LogId, LogDate, LogMessage) VALUES (@LogId, @LogDate, @LogMessage)";
+            //        using (var cmd = new SqlCommand(insertCommand, conn))
+            //        {
+            //            cmd.Parameters.AddWithValue("@LogId", logId);
+            //            cmd.Parameters.AddWithValue("@LogDate", logDate);
+            //            cmd.Parameters.AddWithValue("@LogMessage", logMessage);
+            //            cmd.ExecuteNonQuery();
+            //        }
+            //    }
+            //}
         }
     }
 }
