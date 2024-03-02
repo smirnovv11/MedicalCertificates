@@ -1,4 +1,7 @@
 ﻿using MedicalCertificates.Services;
+using MedicalCertificates.Services.Alert;
+using Microsoft.Data.SqlClient;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +88,67 @@ namespace MedicalCertificates.Views.Settings
 
             DialogResult = true;
             Close();
+        }
+
+        private void ExportLogs_Click(object sender, RoutedEventArgs e)
+        {
+            var path = ShowSaveFileDialog();
+            var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
+            BackupDatabase(conn, "MedicalCertificatesDb", path);
+            BackupLog(conn, "MedicalCertificatesDb", path);
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
+        }
+
+        private static string ShowSaveFileDialog()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Backup Files (*.bak)|*.bak";
+            saveFileDialog.DefaultExt = "bak";
+            bool? result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                return saveFileDialog.FileName;
+            }
+            return null;
+        }
+
+        private static void BackupDatabase(string connectionString, string databaseName, string backupFilePath)
+        {
+            var backupCommand = "BACKUP DATABASE @databaseName TO DISK = @backupFilePath";
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(backupCommand, conn))
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                cmd.Parameters.AddWithValue("@backupFilePath", backupFilePath);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static void BackupLog(string connectionString, string databaseName, string backupFilePath)
+        {
+            var backupCommand = "BACKUP LOG @databaseName TO DISK = @backupFilePath";
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(backupCommand, conn))
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                cmd.Parameters.AddWithValue("@backupFilePath", backupFilePath);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void ImportLog_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using MedicalCertificates.Models;
 using MedicalCertificates.Services.Alert;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,9 @@ namespace MedicalCertificates.Views.Report
                     coursePanel.Visibility = Visibility.Collapsed;
                     break;
                 case ReportType.TotalReport:
+                    groupGb.Visibility = Visibility.Collapsed;
+                    this.Width = 400;
+                    this.Height = 350;
                     groupPanel.Visibility = Visibility.Collapsed;
                     coursePanel.Visibility = Visibility.Collapsed;
                     departmentPanel.Visibility = Visibility.Collapsed;
@@ -88,14 +92,14 @@ namespace MedicalCertificates.Views.Report
         {
             if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
             {
-                departmentBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                departmentBox.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Red);
 
                 courseCb.SelectedItem = null;
                 courseCb.IsEnabled = false;
             }
             else
             {
-                departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
+                departmentBox.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Gray);
 
                 courseCb.IsEnabled = true;
                 courseCb.ItemsSource = db.CoursesTables.Where(c => c.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId)
@@ -108,14 +112,14 @@ namespace MedicalCertificates.Views.Report
         {
             if (courseCb.SelectedItem == null || courseCb.SelectedIndex < 0)
             {
-                courseCb.BorderBrush = new SolidColorBrush(Colors.Red);
+                courseCb.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Red);
 
                 groupcb.SelectedItem = null;
                 groupcb.IsEnabled = false;
             }
             else
             {
-                courseCb.BorderBrush = new SolidColorBrush(Colors.Gray);
+                courseCb.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Gray);
 
                 groupcb.IsEnabled = true;
                 groupcb.ItemsSource = db.GroupsTables.Where(c => c.CourseId == (courseCb.SelectedItem as CoursesTable).CourseId)
@@ -128,11 +132,11 @@ namespace MedicalCertificates.Views.Report
         {
             if (groupcb.SelectedItem == null || groupcb.SelectedIndex < 0)
             {
-                groupBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                groupBox.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Red);
             }
             else
             {
-                groupBox.BorderBrush = new SolidColorBrush(Colors.Gray);
+                groupBox.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Gray);
             }
         }
 
@@ -182,16 +186,16 @@ namespace MedicalCertificates.Views.Report
 
             if (cb1.IsChecked == true && cb3.IsChecked == false)
             {
-                res.Where(d => DateTime.Compare(d.ValidDate, DateTime.Now) == 1);
+                res = res.Where(d => d.ValidDate.Date > DateTime.Now.Date).ToList();
             } 
             else if (cb1.IsChecked == false && cb3.IsChecked == true)
             {
-                res.Where(d => d.ValidDate <= DateTime.Now);
+                res = res.Where(d => d.ValidDate <= DateTime.Now).ToList();
             }
 
             if (birthDatedp.SelectedDate != null)
             {
-                res.Where(d => d.ValidDate <= birthDatedp.SelectedDate.Value).ToList();
+                res = res.Where(d => d.ValidDate <= birthDatedp.SelectedDate.Value).ToList();
             }
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -216,7 +220,8 @@ namespace MedicalCertificates.Views.Report
                 worksheet.Cell(1, 1).Value = title;
                 worksheet.Range(1, 1, 1, 6).Merge().Style
                     .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
-                    .Font.SetBold();
+                    .Font.SetBold()
+                    .Font.FontSize = 14;
 
                 worksheet.Cell(2, 1).Value = "Фамилия";
                 worksheet.Cell(2, 2).Value = "Имя";
@@ -224,6 +229,9 @@ namespace MedicalCertificates.Views.Report
                 worksheet.Cell(2, 4).Value = "Группа здоровья";
                 worksheet.Cell(2, 5).Value = "Группа по физкультуре";
                 worksheet.Cell(2, 6).Value = "Справка годна";
+
+                worksheet.Range(2, 1, 2, 6).Style.Font.SetBold();
+                worksheet.Range(2, 1, 2, 6).Style.Font.SetItalic();
 
                 for (int i = 0; i < data.Count; i++)
                 {
@@ -240,7 +248,7 @@ namespace MedicalCertificates.Views.Report
                 worksheet.Column(2).Width = 20;
                 worksheet.Column(3).Width = 20;
                 worksheet.Column(4).Width = 18;
-                worksheet.Column(5).Width = 20;
+                worksheet.Column(5).Width = 24;
                 worksheet.Column(6).Width = 16;
 
                 workbook.SaveAs(filePath);
@@ -265,12 +273,12 @@ namespace MedicalCertificates.Views.Report
             if (birthDatedp.SelectedDate > DateTime.Now)
             {
                 isValid = true;
-                birthDatedp.BorderBrush = new SolidColorBrush(Colors.Gray);
+                birthDatedp.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Gray);
             }
             else
             {
                 isValid = false;
-                birthDatedp.BorderBrush = new SolidColorBrush(Colors.Red);
+                birthDatedp.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Red);
             }
         }
     }

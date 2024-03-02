@@ -331,6 +331,8 @@ namespace MedicalCertificates.Views.Create
             if (issueDatedp.SelectedDate != null)
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(12);
+                issueDatedp.BorderBrush = new SolidColorBrush(Colors.Gray);
+                isValid[5] = true;
             }
             isValid[6] = true;
         }
@@ -340,6 +342,8 @@ namespace MedicalCertificates.Views.Create
             if (issueDatedp.SelectedDate != null)
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(6);
+                issueDatedp.BorderBrush = new SolidColorBrush(Colors.Gray);
+                isValid[5] = true;
             }
             isValid[6] = true;
         }
@@ -349,6 +353,8 @@ namespace MedicalCertificates.Views.Create
             if (issueDatedp.SelectedDate != null)
             {
                 validDatedp.SelectedDate = issueDatedp.SelectedDate.Value.AddMonths(3);
+                issueDatedp.BorderBrush = new SolidColorBrush(Colors.Gray);
+                isValid[5] = true;
             }
             isValid[6] = true;
         }
