@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using MedicalCertificates.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -28,12 +26,14 @@ namespace MedicalCertificates.Models
         public virtual DbSet<StudentsCertificatesView> StudentsCertificatesViews { get; set; } = null!;
         public virtual DbSet<StudentsGroupArchiveTable> StudentsGroupArchiveTables { get; set; } = null!;
         public virtual DbSet<StudentsTable> StudentsTables { get; set; } = null!;
+        public virtual DbSet<TotalReportView> TotalReportViews { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer($"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;");
             }
         }
 
@@ -42,7 +42,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<CertificatesTable>(entity =>
             {
                 entity.HasKey(e => e.CertificateId)
-                    .HasName("PK__Certific__BBF8A7C1968B6EED");
+                    .HasName("PK__Certific__BBF8A7C1D65844E3");
 
                 entity.ToTable("Certificates_table");
 
@@ -71,7 +71,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<CoursesTable>(entity =>
             {
                 entity.HasKey(e => e.CourseId)
-                    .HasName("PK__Courses___C92D71A724AA8C53");
+                    .HasName("PK__Courses___C92D71A7DE04FEDA");
 
                 entity.ToTable("Courses_table");
 
@@ -93,6 +93,8 @@ namespace MedicalCertificates.Models
 
                 entity.Property(e => e.FirstName).HasMaxLength(20);
 
+                entity.Property(e => e.GroupName).HasMaxLength(5);
+
                 entity.Property(e => e.HealthGroup).HasMaxLength(20);
 
                 entity.Property(e => e.IssueDate).HasColumnType("date");
@@ -111,11 +113,11 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<DepartmentsTable>(entity =>
             {
                 entity.HasKey(e => e.DepartmentId)
-                    .HasName("PK__Departme__B2079BEDAF78E034");
+                    .HasName("PK__Departme__B2079BED55FF9643");
 
                 entity.ToTable("Departments_table");
 
-                entity.HasIndex(e => e.Name, "UQ__Departme__737584F6463C0ACD")
+                entity.HasIndex(e => e.Name, "UQ__Departme__737584F66365FF6F")
                     .IsUnique();
 
                 entity.Property(e => e.MaxCourse).HasDefaultValueSql("('3')");
@@ -126,7 +128,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<GroupsTable>(entity =>
             {
                 entity.HasKey(e => e.GroupId)
-                    .HasName("PK__Groups_t__149AF36A61E6EEEB");
+                    .HasName("PK__Groups_t__149AF36AA0AA3A29");
 
                 entity.ToTable("Groups_table");
 
@@ -141,7 +143,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<HealthGroupTable>(entity =>
             {
                 entity.HasKey(e => e.HealthGroupId)
-                    .HasName("PK__HealthGr__041005CF5C0E0014");
+                    .HasName("PK__HealthGr__041005CFB2EA7B77");
 
                 entity.ToTable("HealthGroup_table");
 
@@ -151,7 +153,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<PegroupTable>(entity =>
             {
                 entity.HasKey(e => e.PegroupId)
-                    .HasName("PK__PEGroup___017BF80F88BFE642");
+                    .HasName("PK__PEGroup___017BF80FD96264DD");
 
                 entity.ToTable("PEGroup_table");
 
@@ -190,7 +192,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<StudentsGroupArchiveTable>(entity =>
             {
                 entity.HasKey(e => e.NoteId)
-                    .HasName("PK__Students__EACE355FE0B228D7");
+                    .HasName("PK__Students__EACE355FD4203BDB");
 
                 entity.ToTable("StudentsGroupArchive_table");
 
@@ -202,7 +204,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<StudentsTable>(entity =>
             {
                 entity.HasKey(e => e.StudentId)
-                    .HasName("PK__Students__32C52B99DB1C66B4");
+                    .HasName("PK__Students__32C52B998A93589E");
 
                 entity.ToTable("Students_table");
 
@@ -218,6 +220,27 @@ namespace MedicalCertificates.Models
                     .WithMany(p => p.StudentsTables)
                     .HasForeignKey(d => d.GroupId)
                     .HasConstraintName("FK_Group");
+            });
+
+            modelBuilder.Entity<TotalReportView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("TotalReport_view");
+
+                entity.Property(e => e.Department).HasMaxLength(100);
+
+                entity.Property(e => e.FirstName).HasMaxLength(20);
+
+                entity.Property(e => e.GroupName).HasMaxLength(5);
+
+                entity.Property(e => e.Pegroup)
+                    .HasMaxLength(20)
+                    .HasColumnName("PEGroup");
+
+                entity.Property(e => e.SecondName).HasMaxLength(20);
+
+                entity.Property(e => e.ThirdName).HasMaxLength(20);
             });
 
             OnModelCreatingPartial(modelBuilder);

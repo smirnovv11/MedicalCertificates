@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -91,14 +92,30 @@ namespace MedicalCertificates.Views.Settings
             Close();
         }
 
-        private void ExportLogs_Click(object sender, RoutedEventArgs e)
+        private async void ExportLogs_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var path = ShowSaveFileDialog();
+                var folderPath = ShowFolderBrowserDialog("Укажите папку создания резервной копии");
+
+                if (string.IsNullOrEmpty(folderPath))
+                {
+                    this.Focus();
+                    return;
+                }
+
+                this.Focus();
+
+                progressBar.Visibility = Visibility.Visible;
+                progressBar.Value = 70;
+
                 var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
-                BackupDatabase(conn, "MedicalCertificatesDb", path);
-                BackupLog(conn, "MedicalCertificatesDb", path);
+                await Task.Run(() => BackupDatabaseAndLog(conn, "MedicalCertificatesDb", folderPath));
+
+                progressBar.Visibility = Visibility.Hidden;
+
+                var succAlert = new Alert("Успешно", "Резервная копия создана успешно.", AlertType.Info);
+                succAlert.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -107,53 +124,71 @@ namespace MedicalCertificates.Views.Settings
             }
         }
 
-        private static string ShowSaveFileDialog()
+        private static string ShowFolderBrowserDialog(string title)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Backup Files (*.bak)|*.bak";
-            saveFileDialog.DefaultExt = "bak";
-            bool? result = saveFileDialog.ShowDialog();
-            if (result == true)
+            var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            dialog.Title = title;
+            Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok)
             {
-                return saveFileDialog.FileName;
+                return dialog.FileName;
             }
             return null;
         }
 
-        private static void BackupDatabase(string connectionString, string databaseName, string backupFilePath)
+        private static void BackupDatabaseAndLog(string connectionString, string databaseName, string folderPath)
         {
-            var backupCommand = "BACKUP DATABASE @databaseName TO DISK = @backupFilePath";
+            var backupDatabaseCommand = "BACKUP DATABASE @databaseName TO DISK = @backupDatabasePath";
+            var backupLogCommand = "BACKUP LOG @databaseName TO DISK = @backupLogPath";
             using (var conn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(backupCommand, conn))
             {
                 conn.Open();
-                cmd.Parameters.AddWithValue("@databaseName", databaseName);
-                cmd.Parameters.AddWithValue("@backupFilePath", backupFilePath);
-                cmd.ExecuteNonQuery();
+                using (var cmd = new SqlCommand(backupDatabaseCommand, conn))
+                {
+                    cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                    cmd.Parameters.AddWithValue("@backupDatabasePath", System.IO.Path.Combine(folderPath, $"{databaseName}_db.bak"));
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = new SqlCommand(backupLogCommand, conn))
+                {
+                    cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                    cmd.Parameters.AddWithValue("@backupLogPath", System.IO.Path.Combine(folderPath, $"{databaseName}_log.bak"));
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
-        private static void BackupLog(string connectionString, string databaseName, string backupFilePath)
-        {
-            var backupCommand = "BACKUP LOG @databaseName TO DISK = @backupFilePath";
-            using (var conn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(backupCommand, conn))
-            {
-                conn.Open();
-                cmd.Parameters.AddWithValue("@databaseName", databaseName);
-                cmd.Parameters.AddWithValue("@backupFilePath", backupFilePath);
-                cmd.ExecuteNonQuery();
-            }
-        }
 
-        private void ImportLog_Click(object sender, RoutedEventArgs e)
+        private async void ImportLog_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var path = ShowOpenFileDialog();
-                var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
+                var askAlert = new AcceptAlert("Внимание", "Восстановление базы данных удалит все текущие данные. Вы желаете продолжить?", AlertType.Warning);
+                if (askAlert.ShowDialog() == true)
+                {
+                    var folderPath = ShowFolderBrowserDialog("Укажите папку загрузки резервной копии");
 
-                ImportLogToDatabase(conn, path);
+                    if (string.IsNullOrEmpty(folderPath))
+                    {
+                        this.Focus();
+                        return;
+                    }
+
+                    this.Focus();
+
+                    var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=master;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
+
+                    progressBar.Visibility = Visibility.Visible;
+
+                    var progress = new Progress<int>(value => progressBar.Value = value);
+                    await Task.Run(() => RestoreDatabaseAndLog(conn, "MedicalCertificatesDb", folderPath, progress));
+
+                    progressBar.Visibility = Visibility.Hidden;
+
+                    var succAlert = new Alert("Успешно", "Резервная копия успешно импортированно. База данных восстановленна.", AlertType.Info);
+                    succAlert.ShowDialog();
+                }
             }
             catch (Exception ex)
             {
@@ -162,42 +197,51 @@ namespace MedicalCertificates.Views.Settings
             }
         }
 
-        private static string ShowOpenFileDialog()
+
+        private static void RestoreDatabaseAndLog(string connectionString, string databaseName, string folderPath, IProgress<int> progress)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Log Files (*.log)|*.log";
-            openFileDialog.DefaultExt = "log";
-            bool? dialogOK = openFileDialog.ShowDialog();
-            if (dialogOK == true)
+            var createDatabaseCommand = $"IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = '{databaseName}') CREATE DATABASE {databaseName}";
+            var setSingleUserModeCommand = $"ALTER DATABASE {databaseName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
+            var restoreDatabaseCommand = "RESTORE DATABASE @databaseName FROM DISK = @backupDatabasePath WITH REPLACE, NORECOVERY";
+            var restoreLogCommand = "RESTORE LOG @databaseName FROM DISK = @backupLogPath WITH NORECOVERY";
+            var recoverDatabaseCommand = $"RESTORE DATABASE {databaseName} WITH RECOVERY";
+            var setMultiUserModeCommand = $"ALTER DATABASE {databaseName} SET MULTI_USER";
+            using (var conn = new SqlConnection(connectionString))
             {
-                return openFileDialog.FileName;
+                conn.Open();
+                using (var cmd = new SqlCommand(createDatabaseCommand, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                progress.Report(20);
+                using (var cmd = new SqlCommand(setSingleUserModeCommand, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = new SqlCommand(restoreDatabaseCommand, conn))
+                {
+                    cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                    cmd.Parameters.AddWithValue("@backupDatabasePath", System.IO.Path.Combine(folderPath, $"{databaseName}_db.bak"));
+                    cmd.ExecuteNonQuery();
+                }
+                progress.Report(45);
+                using (var cmd = new SqlCommand(restoreLogCommand, conn))
+                {
+                    cmd.Parameters.AddWithValue("@databaseName", databaseName);
+                    cmd.Parameters.AddWithValue("@backupLogPath", System.IO.Path.Combine(folderPath, $"{databaseName}_log.bak"));
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = new SqlCommand(recoverDatabaseCommand, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                progress.Report(88);
+                using (var cmd = new SqlCommand(setMultiUserModeCommand, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                progress.Report(100);
             }
-            return null;
-        }
-
-        private static void ImportLogToDatabase(string connectionString, string logFilePath)
-        {
-            string[] logLines = File.ReadAllLines(logFilePath);
-            //using (var conn = new SqlConnection(connectionString))
-            //{
-            //    conn.Open();
-            //    foreach (string logLine in logLines)
-            //    {
-            //        string[] logParts = logLine.Split(',');
-            //        int logId = int.Parse(logParts[0]);
-            //        DateTime logDate = DateTime.Parse(logParts[1]);
-            //        string logMessage = logParts[2];
-
-            //        string insertCommand = "INSERT INTO " + tableName + " (LogId, LogDate, LogMessage) VALUES (@LogId, @LogDate, @LogMessage)";
-            //        using (var cmd = new SqlCommand(insertCommand, conn))
-            //        {
-            //            cmd.Parameters.AddWithValue("@LogId", logId);
-            //            cmd.Parameters.AddWithValue("@LogDate", logDate);
-            //            cmd.Parameters.AddWithValue("@LogMessage", logMessage);
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //    }
-            //}
         }
     }
 }

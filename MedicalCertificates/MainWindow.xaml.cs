@@ -76,7 +76,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка: Не удалось подключится к базе данных либо база данных повреждена.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -595,6 +595,39 @@ namespace MedicalCertificates
         {
             var wind = new ReportSettings(type);
             wind.ShowDialog();
+        }
+
+        private void AllDepReport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
+                saveFileDialog.Title = "Сохранить файл Excel";
+
+                var res = db.TotalReportViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsForReport_procedure").ToList();
+                if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
+                {
+                    string filePath = saveFileDialog.FileName;
+                    AllDepartmentsReport.ExportToExcel(res, filePath, "Отчет по группам здоровья для отделений");
+                }
+                else
+                    return;
+
+                var alert = new Alert("Успешно", "Отчет по группам здоровья для отделений был успешно создан.");
+                alert.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                alert.ShowDialog();
+            }
+        }
+
+        private void HealthList_Click(object sender, RoutedEventArgs e)
+        {
+            //var wind = new HealthList();
+            //wind.ShowDialog();
         }
     }
 }

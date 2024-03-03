@@ -104,8 +104,8 @@
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам" Click="DepartmentReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам" Click="CourseReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группе" Click="GroupReport_Click"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделений"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделений" Click="AllDepReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы" Click="HealthList_Click"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>

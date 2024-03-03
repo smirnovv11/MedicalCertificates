@@ -1,17 +1,27 @@
 USE master
 GO
 
+IF EXISTS (SELECT * FROM sys.syslogins WHERE name = 'Nurse')
+DROP LOGIN Nurse
+GO
+CREATE LOGIN Nurse WITH PASSWORD = 'med321';
+
 DROP DATABASE IF EXISTS MedicalCertificatesDb
 GO
 CREATE DATABASE MedicalCertificatesDb
 GO
 USE MedicalCertificatesDb
 
+USE MedicalCertificatesDb;
+CREATE USER Nurse FOR LOGIN Nurse;
+
+EXEC sp_addrolemember 'db_datareader', 'Nurse';
+EXEC sp_addrolemember 'db_datawriter', 'Nurse';
+
 ALTER DATABASE MedicalCertificatesDb
 SET RECOVERY FULL;
 GO
 SET DATEFORMAT dmy;  
-
 
 DROP TABLE IF EXISTS StudentsGroupArchive_table
 GO
@@ -187,6 +197,7 @@ INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, V
 SELECT * FROM StudentsGroupArchive_table
 SELECT * FROM Students_table
 SELECT * FROM Departments_table
+SELECT * FROM Groups_table
 
 
 --Представления
@@ -205,11 +216,12 @@ DROP VIEW IF EXISTS DataGrid_view
 GO
 CREATE VIEW DataGrid_view
 AS
-SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.StudentId, c.CertificateId, FirstName, SecondName, ThirdName, g.Name AS GroupName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 GO
 
 SELECT * FROM DataGrid_view
@@ -224,7 +236,7 @@ CREATE PROCEDURE ReceiveStudentsGroup_procedure @GroupId INT
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -233,7 +245,7 @@ BEGIN
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 			WHERE s.GroupId = @GroupId
 	)
-	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, GroupName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC, FirstName ASC
@@ -248,7 +260,7 @@ CREATE PROCEDURE ReceiveStudentsCourse_procedure @CourseId INT
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, g.Name AS GroupName, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -257,7 +269,7 @@ BEGIN
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 			WHERE g.CourseId = @CourseId
 	)
-	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, GroupName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC, FirstName ASC
@@ -270,7 +282,7 @@ CREATE PROCEDURE ReceiveStudentsDepartment_procedure @DepartmentId INT
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -280,7 +292,7 @@ BEGIN
 		JOIN Courses_table as cr ON cr.CourseId = g.CourseId
 			WHERE cr.DepartmentId = @DepartmentId
 	)
-	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, GroupName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC, FirstName ASC
@@ -293,7 +305,7 @@ CREATE PROCEDURE ReceiveStudents_procedure
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
+		SELECT s.StudentId, c.CertificateId, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, s.BirthDate, h.HealthGroup, pe.PEGroup, c.ValidDate, c.IssueDate, c.Note,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -301,12 +313,52 @@ BEGIN
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 	)
-	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, StudentId, CertificateId, FirstName, SecondName, ThirdName, GroupName, BirthDate, HealthGroup, PEGroup, ValidDate, IssueDate, Note
 	FROM RankedCertificates
 	WHERE rn = 1
 	ORDER BY SecondName ASC, FirstName ASC
 END
 GO
+
+
+DROP VIEW IF EXISTS TotalReport_view
+GO
+CREATE VIEW TotalReport_view
+AS
+SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, cr.Number AS Course, d.Name AS Department
+FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
+		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId
+GO
+
+DROP PROCEDURE IF EXISTS ReceiveStudentsForReport_procedure
+GO
+CREATE PROCEDURE ReceiveStudentsForReport_procedure
+AS
+BEGIN
+	WITH RankedCertificates AS (
+		SELECT s.SecondName, s.FirstName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, cr.Number AS Course, d.Name AS Department,
+			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
+		FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
+		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId 
+	)
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, SecondName, FirstName, ThirdName, GroupName, PEGroup, Course, Department
+	FROM RankedCertificates
+	WHERE rn = 1
+	GROUP BY PEGroup, Department, Course, GroupName, SecondName, FirstName, ThirdName
+END
+GO
+
+EXEC ReceiveStudentsForReport_procedure
 
 DROP PROCEDURE IF EXISTS UpdateCourseYear_procedure
 GO

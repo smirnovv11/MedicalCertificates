@@ -182,8 +182,6 @@ namespace MedicalCertificates.Views.Report
                     break;
             }
 
-            // TODO: Проверки на дату и типы справок
-
             if (cb1.IsChecked == true && cb3.IsChecked == false)
             {
                 res = res.Where(d => d.ValidDate.Date > DateTime.Now.Date).ToList();
@@ -201,57 +199,70 @@ namespace MedicalCertificates.Views.Report
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
             saveFileDialog.Title = "Сохранить файл Excel";
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
             {
                 string filePath = saveFileDialog.FileName;
                 ExportToExcel(res, filePath, title);
             }
+            else
+                return;
+
+            var sucAlert = new Alert("Успешно", title + " был успешно создан.");
+            sucAlert.ShowDialog();
 
             Close();
         }
 
         private void ExportToExcel(List<DataGridView> data, string filePath, string title)
         {
-            using (var workbook = new XLWorkbook())
+            try
             {
-                var worksheet = workbook.Worksheets.Add("Sheet1");
-
-
-                worksheet.Cell(1, 1).Value = title;
-                worksheet.Range(1, 1, 1, 6).Merge().Style
-                    .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
-                    .Font.SetBold()
-                    .Font.FontSize = 14;
-
-                worksheet.Cell(2, 1).Value = "Фамилия";
-                worksheet.Cell(2, 2).Value = "Имя";
-                worksheet.Cell(2, 3).Value = "Отчетсво";
-                worksheet.Cell(2, 4).Value = "Группа здоровья";
-                worksheet.Cell(2, 5).Value = "Группа по физкультуре";
-                worksheet.Cell(2, 6).Value = "Справка годна";
-
-                worksheet.Range(2, 1, 2, 6).Style.Font.SetBold();
-                worksheet.Range(2, 1, 2, 6).Style.Font.SetItalic();
-
-                for (int i = 0; i < data.Count; i++)
+                using (var workbook = new XLWorkbook())
                 {
-                    worksheet.Cell(i + 3, 1).Value = data[i].SecondName;
-                    worksheet.Cell(i + 3, 2).Value = data[i].FirstName;
-                    worksheet.Cell(i + 3, 3).Value = data[i].ThirdName;
-                    worksheet.Cell(i + 3, 4).Value = data[i].HealthGroup;
-                    worksheet.Cell(i + 3, 5).Value = data[i].Pegroup;
-                    worksheet.Cell(i + 3, 6).Value = data[i].ValidDate;
+                    var worksheet = workbook.Worksheets.Add("Sheet1");
 
+
+                    worksheet.Cell(1, 1).Value = title;
+                    worksheet.Range(1, 1, 1, 6).Merge().Style
+                        .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                        .Font.SetBold()
+                        .Font.FontSize = 14;
+
+                    worksheet.Cell(3, 1).Value = "Фамилия";
+                    worksheet.Cell(3, 2).Value = "Имя";
+                    worksheet.Cell(3, 3).Value = "Отчетсво";
+                    worksheet.Cell(3, 4).Value = "Группа здоровья";
+                    worksheet.Cell(3, 5).Value = "Группа по физкультуре";
+                    worksheet.Cell(3, 6).Value = "Справка годна";
+
+                    worksheet.Range(3, 1, 3, 6).Style.Font.SetBold();
+                    worksheet.Range(3, 1, 3, 6).Style.Font.SetItalic();
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        worksheet.Cell(i + 4, 1).Value = data[i].SecondName;
+                        worksheet.Cell(i + 4, 2).Value = data[i].FirstName;
+                        worksheet.Cell(i + 4, 3).Value = data[i].ThirdName;
+                        worksheet.Cell(i + 4, 4).Value = data[i].HealthGroup;
+                        worksheet.Cell(i + 4, 5).Value = data[i].Pegroup;
+                        worksheet.Cell(i + 4, 6).Value = data[i].ValidDate.ToString("dd.MM.yyyy");
+
+                    }
+
+                    worksheet.Column(1).Width = 20;
+                    worksheet.Column(2).Width = 20;
+                    worksheet.Column(3).Width = 20;
+                    worksheet.Column(4).Width = 18;
+                    worksheet.Column(5).Width = 24;
+                    worksheet.Column(6).Width = 16;
+
+                    workbook.SaveAs(filePath);
                 }
-
-                worksheet.Column(1).Width = 20;
-                worksheet.Column(2).Width = 20;
-                worksheet.Column(3).Width = 20;
-                worksheet.Column(4).Width = 18;
-                worksheet.Column(5).Width = 24;
-                worksheet.Column(6).Width = 16;
-
-                workbook.SaveAs(filePath);
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                alert.ShowDialog();
             }
         }
 

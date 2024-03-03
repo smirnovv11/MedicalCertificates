@@ -43,30 +43,33 @@
             </Grid>
 
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 24">
-                    <GroupBox Header="Подключение к базе данных" Padding="4 8 4 4" FontSize="13">
-                        <StackPanel>
-                            <Label FontSize="16">Имя сервера:</Label>
-                            <TextBox Name="dbnameTb" FontSize="16" Width="440" Margin="5 0" Padding="3"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Резервное копирвание" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0 10 0 0">
-                            <Button Style="{StaticResource NoteButton}" Margin="0 0 10 0" Click="ExportLogs_Click">Экспорт</Button>
-                            <Button Style="{StaticResource NoteButton}" Click="ImportLog_Click">Импорт</Button>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Предпочтения" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
-                        <StackPanel>
-                            <Label FontSize="16">Период выделения до завершения срока справки:</Label>
-                            <ComboBox Name="warningPeriodCb" Width="200" FontSize="16" Margin="5 0" HorizontalAlignment="Left">
-                                <ComboBoxItem>1 месяц</ComboBoxItem>
-                                <ComboBoxItem IsSelected="True">3 месяца</ComboBoxItem>
-                                <ComboBoxItem>4 месяца</ComboBoxItem>
-                                <ComboBoxItem>6 месяцев</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-                    </GroupBox>
+                <StackPanel>
+                    <ProgressBar x:Name="progressBar" Visibility="Hidden" Height="20"/>
+                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 14">
+                        <GroupBox Header="Подключение к базе данных" Padding="4 8 4 4" FontSize="13">
+                            <StackPanel>
+                                <Label FontSize="16">Имя сервера:</Label>
+                                <TextBox Name="dbnameTb" FontSize="16" Width="440" Margin="5 0" Padding="3"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Резервное копирвание" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0 10 0 0">
+                                <Button Style="{StaticResource NoteButton}" Margin="0 0 10 0" Click="ExportLogs_Click">Экспорт</Button>
+                                <Button Style="{StaticResource NoteButton}" Click="ImportLog_Click">Импорт</Button>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Предпочтения" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
+                            <StackPanel>
+                                <Label FontSize="16">Период выделения до завершения срока справки:</Label>
+                                <ComboBox Name="warningPeriodCb" Width="200" FontSize="16" Margin="5 0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>1 месяц</ComboBoxItem>
+                                    <ComboBoxItem IsSelected="True">3 месяца</ComboBoxItem>
+                                    <ComboBoxItem>4 месяца</ComboBoxItem>
+                                    <ComboBoxItem>6 месяцев</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
 
