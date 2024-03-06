@@ -67,7 +67,7 @@ namespace MedicalCertificates.Views.Settings
         {
             if (e.Key == Key.Enter)
             {
-                saveBtn.Focus();
+                this.saveBtn.Focus();
                 this.saveBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
             if (e.Key == Key.Escape)
@@ -119,6 +119,7 @@ namespace MedicalCertificates.Views.Settings
             }
             catch (Exception ex)
             {
+                progressBar.Visibility = Visibility.Hidden;
                 var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
                 alert.ShowDialog();
             }
@@ -139,8 +140,8 @@ namespace MedicalCertificates.Views.Settings
 
         private static void BackupDatabaseAndLog(string connectionString, string databaseName, string folderPath)
         {
-            var backupDatabaseCommand = "BACKUP DATABASE @databaseName TO DISK = @backupDatabasePath";
-            var backupLogCommand = "BACKUP LOG @databaseName TO DISK = @backupLogPath";
+            var backupDatabaseCommand = "BACKUP DATABASE @databaseName TO DISK = @backupDatabasePath WITH INIT";
+            var backupLogCommand = "BACKUP LOG @databaseName TO DISK = @backupLogPath WITH INIT";
             using (var conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -192,6 +193,7 @@ namespace MedicalCertificates.Views.Settings
             }
             catch (Exception ex)
             {
+                progressBar.Visibility = Visibility.Hidden;
                 var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
                 alert.ShowDialog();
             }

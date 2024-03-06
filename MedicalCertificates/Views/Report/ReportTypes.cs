@@ -9,6 +9,7 @@ namespace MedicalCertificates.Views.Report
     public enum ReportType
     {
         Group,
+        ShortGroup,
         Course,
         Department,
         TotalReport

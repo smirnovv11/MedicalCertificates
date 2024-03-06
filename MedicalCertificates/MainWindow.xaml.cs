@@ -626,8 +626,7 @@ namespace MedicalCertificates
 
         private void HealthList_Click(object sender, RoutedEventArgs e)
         {
-            //var wind = new HealthList();
-            //wind.ShowDialog();
+            OpenReportSettings(ReportType.ShortGroup);
         }
     }
 }

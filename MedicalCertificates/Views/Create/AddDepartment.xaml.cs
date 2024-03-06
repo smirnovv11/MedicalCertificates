@@ -131,7 +131,7 @@ namespace MedicalCertificates.Views.Create
         {
             if (e.Key == Key.Enter)
             {
-                YesButton.Focus();
+                this.YesButton.Focus();
                 this.YesButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
             else if (e.Key == Key.Escape)

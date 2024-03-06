@@ -38,6 +38,7 @@ namespace MedicalCertificates.Views.Report
             switch (type)
             {
                 case ReportType.Group:
+                case ReportType.ShortGroup:
                     break;
                 case ReportType.Course:
                     groupPanel.Visibility = Visibility.Collapsed;
@@ -170,14 +171,15 @@ namespace MedicalCertificates.Views.Report
             switch (type)
             {
                 case ReportType.Department:
-                    title = $"Отчет по отделению ({(departmentcb.SelectedItem as DepartmentsTable).Name})";
+                    title = $"Отчет по отделению {(departmentcb.SelectedItem as DepartmentsTable).Name}";
                     break;
                 case ReportType.Course:
-                    title = $"Отчет по курсу ({(courseCb.SelectedItem as CoursesTable).Number}), отделение {(departmentcb.SelectedItem as DepartmentsTable).Name}";
+                    title = $"Отчет по курсу {(courseCb.SelectedItem as CoursesTable).Number}, отделение {(departmentcb.SelectedItem as DepartmentsTable).Name}";
                     res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsCourse_procedure {(courseCb.SelectedItem as CoursesTable).CourseId}").ToList();
                     break;
+                case ReportType.ShortGroup:
                 case ReportType.Group:
-                    title = $"Отчет по группе ({(groupcb.SelectedItem as GroupsTable).Name})";
+                    title = $"Отчет по группе {(groupcb.SelectedItem as GroupsTable).Name}";
                     res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure {(groupcb.SelectedItem as GroupsTable).GroupId}").ToList();
                     break;
             }
@@ -202,7 +204,15 @@ namespace MedicalCertificates.Views.Report
             if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
             {
                 string filePath = saveFileDialog.FileName;
-                ExportToExcel(res, filePath, title);
+                if (type == ReportType.ShortGroup)
+                {
+                    title = $"Листок здоровья группы {(groupcb.SelectedItem as GroupsTable).Name}";
+                    ExportToExcelShort(res, filePath, title);
+                }
+                else
+                {
+                    ExportToExcel(res, filePath, title);
+                }
             }
             else
                 return;
@@ -255,6 +265,50 @@ namespace MedicalCertificates.Views.Report
                     worksheet.Column(4).Width = 18;
                     worksheet.Column(5).Width = 24;
                     worksheet.Column(6).Width = 16;
+
+                    workbook.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                alert.ShowDialog();
+            }
+        }
+
+        private void ExportToExcelShort(List<DataGridView> data, string filePath, string title)
+        {
+            try
+            {
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Sheet1");
+
+
+                    worksheet.Cell(1, 1).Value = title;
+                    worksheet.Range(1, 1, 1, 3).Merge().Style
+                        .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                        .Font.SetBold()
+                        .Font.FontSize = 14;
+
+                    worksheet.Cell(3, 1).Value = "ФИО";
+                    worksheet.Cell(3, 2).Value = "Группа здоровья";
+                    worksheet.Cell(3, 3).Value = "Группа по физкультуре";
+
+                    worksheet.Range(3, 1, 3, 3).Style.Font.SetBold();
+                    worksheet.Range(3, 1, 3, 3).Style.Font.SetItalic();
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        worksheet.Cell(i + 4, 1).Value = $"{data[i].SecondName} {data[i].FirstName[0]}. {data[i].ThirdName[0]}." ;
+                        worksheet.Cell(i + 4, 2).Value = data[i].HealthGroup;
+                        worksheet.Cell(i + 4, 3).Value = data[i].Pegroup;
+
+                    }
+
+                    worksheet.Column(1).Width = 24;
+                    worksheet.Column(2).Width = 22;
+                    worksheet.Column(3).Width = 22;
 
                     workbook.SaveAs(filePath);
                 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Views.Create"
         mc:Ignorable="d"
-        Title="Добавление" Height="440" Width="470" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" PreviewKeyDown="Window_PreviewKeyDown"        AllowsTransparency="True" Background="Transparent">
+        Title="Добавление" Height="440" Width="470" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" KeyDown="Window_PreviewKeyDown"        AllowsTransparency="True" Background="Transparent">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
