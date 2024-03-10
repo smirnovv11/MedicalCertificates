@@ -198,18 +198,12 @@ BEGIN
 	WHILE @Num > 0
 	BEGIN
 		PRINT 'Checking course number: ' + CAST(@Num AS VARCHAR)
-		IF NOT EXISTS (SELECT * FROM Courses_table WHERE Number = @Num)
-			BEGIN
-				PRINT 'Adding course number: ' + CAST(@Num AS VARCHAR)
-				INSERT Courses_table(DepartmentId, Number) VALUES (@DepId, @Num)
-			END
+		IF NOT EXISTS (SELECT * FROM Courses_table WHERE Number = @Num AND DepartmentId = @DepId)
+			INSERT Courses_table(DepartmentId, Number) VALUES (@DepId, @Num)
 		SET @Num = @Num - 1
 	END
 END
 GO
-
-EXEC AutoCreateCourses_procedure 3
-SELECT * FROM Courses_table WHERE DepartmentId = 3
 
 DROP PROCEDURE IF EXISTS ReceiveStudentsGroup_procedure
 GO
