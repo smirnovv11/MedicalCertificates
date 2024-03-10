@@ -1,4 +1,6 @@
-﻿using MedicalCertificates.Models;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using MedicalCertificates.Models;
+using MedicalCertificates.Services;
 using MedicalCertificates.Services.Alert;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,7 @@ namespace MedicalCertificates.Views.Create
                 InitializeComponent();
                 db = new MedicalCertificatesDbContext();
 
+                autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
                 isValid = new bool[2] { false, true };
             }
             catch (Exception ex)
@@ -109,6 +112,11 @@ namespace MedicalCertificates.Views.Create
             {
                 AddDepartmentToDb();
 
+                if (autoCoursesCb.IsChecked == true)
+                {
+                    AddCourses();
+                }
+
                 this.DialogResult = true;
                 Close();
             }
@@ -125,6 +133,13 @@ namespace MedicalCertificates.Views.Create
             var maxCourse = new SqlParameter("@MaxCourse", maxCoursetb.Text);
 
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateDepartment_procedure @Name, @MaxCourse", name, maxCourse);
+        }
+
+        private void AddCourses()
+        {
+            db = new MedicalCertificatesDbContext();
+            var id = new SqlParameter("@DepId", db.DepartmentsTables.First(d => d.Name == nametb.Text).DepartmentId);
+            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC AutoCreateCourses_procedure @DepId", id);
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)

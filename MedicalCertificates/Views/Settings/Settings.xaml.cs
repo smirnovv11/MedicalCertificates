@@ -50,6 +50,8 @@ namespace MedicalCertificates.Views.Settings
                     warningPeriodCb.SelectedIndex = 1;
                     break;
             }
+
+            autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -87,6 +89,8 @@ namespace MedicalCertificates.Views.Settings
             {
                 JsonServices.Write("warningPeriod", warningPeriodCb.Text.Substring(0, 1));
             }
+
+            JsonServices.Write("autoCourses", autoCoursesCb.IsChecked.ToString());
 
             DialogResult = true;
             Close();

@@ -35,7 +35,6 @@ namespace MedicalCertificates.Views.Create
                 InitializeComponent();
                 db = new MedicalCertificatesDbContext();
 
-                yeartb.Text = DateTime.Now.Year.ToString();
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
 
@@ -101,22 +100,6 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
-        private void yeartb_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if ((sender as TextBox).Text.Length > 0
-                && Convert.ToInt32((sender as TextBox).Text) > 1990
-                && Convert.ToInt32((sender as TextBox).Text) <= 2100)
-            {
-                (sender as TextBox).BorderBrush = new SolidColorBrush(Colors.Gray);
-                isValid[2] = true;
-            }
-            else
-            {
-                (sender as TextBox).BorderBrush = new SolidColorBrush(Colors.Red);
-                isValid[2] = false;
-            }
-        }
-
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (var el in isValid)
@@ -145,9 +128,8 @@ namespace MedicalCertificates.Views.Create
         {
             var departmentId = new SqlParameter("@DepId", (departmentcb.SelectedItem as DepartmentsTable).DepartmentId);
             var number = new SqlParameter("@Number", numbertb.Text);
-            var year = new SqlParameter("@Year", yeartb.Text);
 
-            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCourse_procedure @DepId, @Number, @Year", departmentId, number, year);
+            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCourse_procedure @DepId, @Number", departmentId, number);
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)

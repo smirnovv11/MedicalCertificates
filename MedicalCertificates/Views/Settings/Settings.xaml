@@ -60,13 +60,18 @@
                         </GroupBox>
                         <GroupBox Header="Предпочтения" Margin="0 16 0 0" Padding="4 8 4 4" FontSize="13">
                             <StackPanel>
-                                <Label FontSize="16">Период выделения до завершения срока справки:</Label>
-                                <ComboBox Name="warningPeriodCb" Width="200" FontSize="16" Margin="5 0" HorizontalAlignment="Left">
-                                    <ComboBoxItem>1 месяц</ComboBoxItem>
-                                    <ComboBoxItem IsSelected="True">3 месяца</ComboBoxItem>
-                                    <ComboBoxItem>4 месяца</ComboBoxItem>
-                                    <ComboBoxItem>6 месяцев</ComboBoxItem>
-                                </ComboBox>
+                                <StackPanel>
+                                    <Label FontSize="16">Период выделения до завершения срока справки:</Label>
+                                    <ComboBox Name="warningPeriodCb" Width="200" FontSize="16" Margin="5 0" HorizontalAlignment="Left">
+                                        <ComboBoxItem>1 месяц</ComboBoxItem>
+                                        <ComboBoxItem IsSelected="True">3 месяца</ComboBoxItem>
+                                        <ComboBoxItem>4 месяца</ComboBoxItem>
+                                        <ComboBoxItem>6 месяцев</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="4 20 0 4">
+                                    <CheckBox Name="autoCoursesCb" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="Автосоздание курсов" FontSize="16"/>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>

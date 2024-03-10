@@ -61,22 +61,6 @@ namespace MedicalCertificates.Views.Update
             this.Close();
         }
 
-        private void yeartb_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if ((sender as TextBox).Text.Length > 0
-                && Convert.ToInt32((sender as TextBox).Text) > 1990
-                && Convert.ToInt32((sender as TextBox).Text) <= 2100)
-            {
-                (sender as TextBox).BorderBrush = new SolidColorBrush(Colors.Gray);
-                isValid[1] = true;
-            }
-            else
-            {
-                (sender as TextBox).BorderBrush = new SolidColorBrush(Colors.Red);
-                isValid[1] = false;
-            }
-        }
-
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -119,7 +103,6 @@ namespace MedicalCertificates.Views.Update
                 coursecb.DisplayMemberPath = "Number";
                 coursecb.IsEnabled = true;
 
-                yeartb.Text = "";
                 numbertb.Text = "";
 
                 isValid[0] = false;
@@ -155,9 +138,8 @@ namespace MedicalCertificates.Views.Update
         {
             var id = new SqlParameter("@Id", (coursecb.SelectedItem as CoursesTable).CourseId);
             var name = new SqlParameter("@Number", numbertb.Text);
-            var maxCourse = new SqlParameter("@Year", yeartb.Text);
 
-            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC UpdateCourse_procedure @Id, @Number, @Year", id, name, maxCourse);
+            db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC UpdateCourse_procedure @Id, @Number", id, name);
         }
 
         private void coursecb_LostFocus(object sender, RoutedEventArgs e)
@@ -178,10 +160,8 @@ namespace MedicalCertificates.Views.Update
             {
                 var item = coursecb.SelectedItem as CoursesTable;
                 numbertb.Text = item.Number.ToString();
-                yeartb.Text = item.Year.ToString();
 
                 numbertb.IsEnabled = true;
-                yeartb.IsEnabled = true;
 
                 isValid[0] = true;
                 isValid[1] = true;

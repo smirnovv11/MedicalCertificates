@@ -52,7 +52,6 @@ CREATE TABLE Courses_table (
 	CourseId INT PRIMARY KEY IDENTITY NOT NULL,
 	DepartmentId INT NOT NULL,
 	Number INT DEFAULT '1' NOT NULL,
-	Year INT,
 	CONSTRAINT FK_Department FOREIGN KEY (DepartmentId) REFERENCES Departments_table(DepartmentId)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
@@ -117,17 +116,6 @@ CREATE TABLE Certificates_table (
 )
 GO
 
-CREATE TABLE StudentsGroupArchive_table(
-	NoteId INT PRIMARY KEY IDENTITY NOT NULL,
-	StudentId INT NOT NULL,
-	CourseId INT NOT NULL,
-	OldGroupId INT NOT NULL,
-	NewGroupId INT NOT NULL,
-	Year INT NOT NULL,
-	AlterDate DATE DEFAULT GETDATE() NOT NULL
-)
-GO
-
 
 --Триггеры
 
@@ -149,40 +137,12 @@ BEGIN
 END
 GO
 
-DROP TRIGGER IF EXISTS StudentsAlter_trigger
-GO
-CREATE TRIGGER StudentsAlter_trigger
-ON Students_table AFTER UPDATE
-AS
-BEGIN
-	DECLARE @OldGroup INT = (SELECT GroupId FROM deleted)
-	DECLARE @NewGroup INT = (SELECT GroupId FROM inserted)
-	DECLARE @Year INT = (SELECT Year FROM inserted 
-			JOIN Groups_table ON inserted.GroupId = Groups_table.GroupId
-			JOIN Courses_table ON Courses_table.CourseId = Groups_table.CourseId)
-	IF @OldGroup != @NewGroup
-		BEGIN
-			INSERT StudentsGroupArchive_table(StudentId, CourseId, OldGroupId, NewGroupId, Year)
-			VALUES (
-				(SELECT StudentId FROM inserted),
-				(SELECT Courses_table.CourseId FROM inserted
-					JOIN Groups_table ON inserted.GroupId = Groups_table.GroupId
-					JOIN Courses_table ON Courses_table.CourseId = Groups_table.CourseId),
-				@OldGroup,
-				@NewGroup,
-				@Year
-			)
-		END
-END
-GO
-
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Неопределенные', 999)
-INSERT INTO Courses_table(DepartmentId, Number, Year) VALUES (1, 99, 2023)
+INSERT INTO Courses_table(DepartmentId, Number) VALUES (1, 99)
 INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
 
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
---UPDATE Courses_table SET Number = 99 WHERE CourseId = 9
-INSERT INTO Courses_table(Number, DepartmentId, Year) VALUES (4, 2, '2023') 
+INSERT INTO Courses_table(Number, DepartmentId) VALUES (4, 2) 
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-341', 2)
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-342', 2)
 INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
@@ -194,7 +154,6 @@ INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, V
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (2, 3, 3, '28-02-2023', '28-02-2024')
 INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, ValidDate) VALUES (3, 2, 2, '02-09-2022', '02-09-2023')
 
-SELECT * FROM StudentsGroupArchive_table
 SELECT * FROM Students_table
 SELECT * FROM Departments_table
 SELECT * FROM Groups_table
@@ -229,6 +188,28 @@ SELECT * FROM StudentsCertificates_view WHERE StudentId = 3
 
 
 --Процедуры
+
+DROP PROCEDURE IF EXISTS AutoCreateCourses_procedure 
+GO
+CREATE PROCEDURE AutoCreateCourses_procedure @DepId INT
+AS
+BEGIN
+	DECLARE @Num INT = (SELECT TOP 1 MaxCourse FROM Departments_table WHERE DepartmentId = @DepId)
+	WHILE @Num > 0
+	BEGIN
+		PRINT 'Checking course number: ' + CAST(@Num AS VARCHAR)
+		IF NOT EXISTS (SELECT * FROM Courses_table WHERE Number = @Num)
+			BEGIN
+				PRINT 'Adding course number: ' + CAST(@Num AS VARCHAR)
+				INSERT Courses_table(DepartmentId, Number) VALUES (@DepId, @Num)
+			END
+		SET @Num = @Num - 1
+	END
+END
+GO
+
+EXEC AutoCreateCourses_procedure 3
+SELECT * FROM Courses_table WHERE DepartmentId = 3
 
 DROP PROCEDURE IF EXISTS ReceiveStudentsGroup_procedure
 GO
@@ -410,10 +391,10 @@ GO
 
 DROP PROCEDURE IF EXISTS CreateCourse_procedure
 GO
-CREATE PROCEDURE CreateCourse_procedure @DepId INT, @Number INT, @Year INT
+CREATE PROCEDURE CreateCourse_procedure @DepId INT, @Number INT
 AS
 BEGIN
-	INSERT Courses_table(DepartmentId, Number, Year) VALUES (@DepId, @Number, @Year)
+	INSERT Courses_table(DepartmentId, Number) VALUES (@DepId, @Number)
 END
 GO
 
@@ -428,10 +409,10 @@ GO
 
 DROP PROCEDURE IF EXISTS UpdateCourse_procedure
 GO
-CREATE PROCEDURE UpdateCourse_procedure @Id INT, @Number INT, @Year INT
+CREATE PROCEDURE UpdateCourse_procedure @Id INT, @Number INT
 AS
 BEGIN
-	UPDATE Courses_table SET Number = @Number, Year = @Year WHERE CourseId = @Id
+	UPDATE Courses_table SET Number = @Number WHERE CourseId = @Id
 END
 GO
 
@@ -534,5 +515,3 @@ BEGIN
 	UPDATE Certificates_table SET HealthGroupId = @HealthGroupId, PEGroupId = @PEGroupId, IssueDate = @IssueDate, ValidDate = @ValidDate, Note = @Note WHERE CertificateId = @Id
 END
 GO
-
-SELECT * FROM StudentsGroupArchive_table

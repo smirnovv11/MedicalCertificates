@@ -13,7 +13,6 @@ namespace MedicalCertificates.Models
         public int CourseId { get; set; }
         public int DepartmentId { get; set; }
         public int Number { get; set; }
-        public int? Year { get; set; }
 
         public virtual DepartmentsTable Department { get; set; } = null!;
         public virtual ICollection<GroupsTable> GroupsTables { get; set; }
