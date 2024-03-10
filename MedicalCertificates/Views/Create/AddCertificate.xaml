@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MedicalCertificates.Views.Create"
         mc:Ignorable="d"
         Title="Добавление" Height="480" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" KeyDown="Window_PreviewKeyDown"
-        AllowsTransparency="True" Background="Transparent">
+        AllowsTransparency="True" Background="Transparent" Icon="/Images/icon.png" >
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">

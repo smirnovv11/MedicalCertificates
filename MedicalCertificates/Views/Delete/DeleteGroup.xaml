@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MedicalCertificates.Views.Delete"
         mc:Ignorable="d"
-        Title="Удаление" Height="240" Width="470" ResizeMode="NoResize" KeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" WindowStyle="None"        AllowsTransparency="True" Background="Transparent">
+        Title="Удаление" Height="240" Width="470" ResizeMode="NoResize" Icon="/Images/icon.png" KeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" WindowStyle="None"        AllowsTransparency="True" Background="Transparent">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">

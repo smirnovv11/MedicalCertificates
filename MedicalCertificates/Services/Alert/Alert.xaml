@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MedicalCertificates.Services.Alert"
         mc:Ignorable="d"
        Title="Сообщение" Height="260" Width="550" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" KeyDown="Window_PreviewKeyDown"
-        AllowsTransparency="True" Background="Transparent">
+        AllowsTransparency="True" Background="Transparent" Icon="/Images/icon.png">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">

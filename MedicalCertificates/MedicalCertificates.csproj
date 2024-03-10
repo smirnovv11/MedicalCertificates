@@ -8,11 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icon.png" />
+    <None Remove="Images\icon.png" />
+    <None Remove="Images\search.png" />
     <None Remove="search.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
     <Folder Include="Models\" />
   </ItemGroup>
 
@@ -31,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="icon.png" />
+    <Resource Include="Images\icon.png" />
+    <Resource Include="Images\search.png" />
     <Resource Include="search.png" />
   </ItemGroup>
 

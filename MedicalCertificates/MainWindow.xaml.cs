@@ -53,6 +53,7 @@ namespace MedicalCertificates
                 {
                     JsonServices.Write("dbname", "DESKTOP-UTKFT1Q\\SQLEXPRESS");
                     JsonServices.Write("warningPeriod", "3");
+                    JsonServices.Write("autoCourses", "true");
                 }
 
                 db = new MedicalCertificatesDbContext();
