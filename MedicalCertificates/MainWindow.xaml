@@ -51,6 +51,7 @@
                    FontSize="16"
                    Margin="20 5">MEDICAL CERTIFICATES</Label>
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="HelpButton" Style="{StaticResource MinimazeButton}" VerticalContentAlignment="Center" FontSize="16" Click="HelpButton_Click">?</Button>
                     <Button x:Name="HideButton" Style="{StaticResource MinimazeButton}" VerticalContentAlignment="Center" Click="HideButton_Click">-</Button>
                     <Button x:Name="ExitButton" Style="{StaticResource ExitButton}" VerticalContentAlignment="Center" Click="ExitButton_Click">x</Button>
                 </StackPanel>

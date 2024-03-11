@@ -629,5 +629,10 @@ namespace MedicalCertificates
         {
             OpenReportSettings(ReportType.ShortGroup);
         }
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.Help.ShowHelp(null, "Help.chm");
+        }
     }
 }
