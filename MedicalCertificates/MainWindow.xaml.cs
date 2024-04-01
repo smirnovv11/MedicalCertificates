@@ -48,7 +48,9 @@ namespace MedicalCertificates
         {
             try
             {
+                // Путь к файлу настроек
                 var jsonPath = "settings.json";
+                // Если файл настроек не существует, создаем его с начальными значениями
                 if (!File.Exists(jsonPath))
                 {
                     JsonServices.Write("dbname", "DESKTOP-UTKFT1Q\\SQLEXPRESS");
@@ -56,27 +58,33 @@ namespace MedicalCertificates
                     JsonServices.Write("autoCourses", "true");
                 }
 
+                // Инициализация контекста базы данных
                 db = new MedicalCertificatesDbContext();
                 InitializeComponent();
 
+                // Установка культуры и формата даты для текущего потока
                 CultureInfo cultureInfo = new CultureInfo("ru-RU");
                 DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
                 dateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
                 cultureInfo.DateTimeFormat = dateTimeFormat;
                 Thread.CurrentThread.CurrentCulture = cultureInfo;
 
+                // Получение доступа к таблицам базы данных
                 groups = db.GroupsTables;
                 students = db.StudentsTables;
 
+                // Обновление данных в дереве
                 UpdateTreeData();
                 currStudentId = -1;
                 currGroupId = -1;
 
                 TableLabel.Text = "Выберите группу или учащегося для просмотра информации";
 
+
             }
             catch (Exception ex)
             {
+                // Вывод сообщения об ошибке, если не удалось подключиться к базе данных
                 var alert = new Alert("Ошибка!", "Ошибка: Не удалось подключится к базе данных либо база данных повреждена.", AlertType.Error);
                 alert.ShowDialog();
             }
@@ -84,6 +92,7 @@ namespace MedicalCertificates
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Установка размеров и положения окна при загрузке
             double taskbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Height;
             this.Top = 0;
             this.Left = 0;
@@ -93,17 +102,20 @@ namespace MedicalCertificates
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            // Перемещение окна при нажатии левой кнопкой мыши
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
         private void HideButton_Click(object sender, RoutedEventArgs e)
         {
+            // Сворачивание окна при нажатии на кнопку "Свернуть"
             System.Windows.Application.Current.MainWindow.WindowState = WindowState.Minimized;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
+            // Закрытие приложения при нажатии на кнопку "Закрыть"
             System.Windows.Application.Current.Shutdown();
         }
 
@@ -454,7 +466,13 @@ namespace MedicalCertificates
                     {
                         var worksheet = workbook.Worksheets.Worksheet(1);
                         var rowCount = worksheet.LastRowUsed().RowNumber();
-                        var studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).FirstOrDefault().StudentId + 1;
+
+                        var studentId = 1;
+                        if (db.StudentsTables.Count() != 0)
+                        {
+                            studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).FirstOrDefault().StudentId + 1;
+                        }
+
                         var group = db.GroupsTables.First(g => g.CourseId
                                 == db.CoursesTables.First(c => c.DepartmentId
                                 == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
@@ -634,5 +652,6 @@ namespace MedicalCertificates
         {
             System.Windows.Forms.Help.ShowHelp(null, "Help.chm");
         }
+        
     }
 }

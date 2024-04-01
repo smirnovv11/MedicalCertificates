@@ -46,7 +46,7 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0">
-            <Grid Background="#131f3b" MouseDown="Grid_MouseDown">
+            <Grid Background="#131f3b">
                 <Label Foreground="#ebf0f3" HorizontalAlignment="Center"
                    FontSize="16"
                    Margin="20 5">MEDICAL CERTIFICATES</Label>

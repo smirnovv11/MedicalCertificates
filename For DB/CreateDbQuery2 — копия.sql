@@ -39,8 +39,6 @@ DROP TABLE IF EXISTS Courses_table
 GO
 DROP TABLE IF EXISTS Departments_table
 GO
-DROP TABLE IF EXISTS HealthGroupChanges_table
-GO
 
 
 CREATE TABLE Departments_table (
@@ -75,7 +73,7 @@ CREATE TABLE Students_table (
 	GroupId INT NOT NULL,
 	FirstName NVARCHAR(20) NOT NULL,
 	SecondName NVARCHAR(20) NOT NULL,
-	ThirdName NVARCHAR(20) NULL,
+	ThirdName NVARCHAR(20) NOT NULL,
 	BirthDate DATE NOT NULL,
 	CONSTRAINT FK_Group FOREIGN KEY (GroupId) REFERENCES Groups_table(GroupId)
 		ON DELETE CASCADE
@@ -118,19 +116,6 @@ CREATE TABLE Certificates_table (
 )
 GO
 
-CREATE TABLE HealthGroupChanges_table (
-	StudentId INT NOT NULL,
-	CurrHealth NVARCHAR(20) NOT NULL,
-	CurrPE NVARCHAR(20) NOT NULL,
-	PrevHealth NVARCHAR(20) NOT NULL,
-	PrevPE NVARCHAR(20) NOT NULL,
-	Date DATE DEFAULT GETDATE() NOT NULL,
-	CONSTRAINT FK_Changes_Student FOREIGN KEY (StudentId) REFERENCES Students_table(StudentId)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
-)
-GO
-
 
 --Триггеры
 
@@ -152,29 +137,12 @@ BEGIN
 END
 GO
 
-DROP TRIGGER IF EXISTS CertificateChange_trigger
-GO
-CREATE TRIGGER CertificateChange_trigger
-ON Certificates_table AFTER UPDATE
-AS
-BEGIN
-	DECLARE @CurrHealth NVARCHAR(20) = (SELECT TOP 1 HealthGroup FROM inserted JOIN HealthGroup_table ON HealthGroup_table.HealthGroupId = inserted.HealthGroupId)
-	DECLARE @PrevHealth NVARCHAR(20) = (SELECT TOP 1 HealthGroup FROM deleted JOIN HealthGroup_table ON HealthGroup_table.HealthGroupId = deleted.HealthGroupId)
-	DECLARE @CurrPE NVARCHAR(20) = (SELECT TOP 1 PEGroup FROM inserted JOIN PEGroup_table ON PEGroup_table.PEGroupId = inserted.PEGroupId)
-	DECLARE @PrevPE NVARCHAR(20) = (SELECT TOP 1 PEGroup FROM deleted JOIN PEGroup_table ON PEGroup_table.PEGroupId = deleted.PEGroupId)
-	
-	IF @CurrHealth != @PrevHealth OR @CurrPE != @PrevPE
-		INSERT HealthGroupChanges_table(StudentId, CurrHealth, CurrPE, PrevHealth, PrevPE)
-			VALUES ((SELECT TOP 1 StudentId FROM inserted), @CurrHealth, @CurrPE, @PrevHealth, @PrevPE)
-END
-GO
-
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Неопределенные', 999)
 INSERT INTO Courses_table(DepartmentId, Number) VALUES (1, 99)
 INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
 
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
-INSERT INTO Courses_table(Number, DepartmentId) VALUES (3, 2) 
+INSERT INTO Courses_table(Number, DepartmentId) VALUES (4, 2) 
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-341', 2)
 INSERT INTO Groups_table(Name, CourseId) VALUES (N'Т-342', 2)
 INSERT INTO Students_table(GroupId, FirstName, SecondName, ThirdName, BirthDate) VALUES (2, N'Дмитрий', N'Комаров', N'Андреевич', '31-12-2004')
@@ -215,16 +183,8 @@ FROM Students_table AS s
 		JOIN Groups_table AS g ON g.GroupId = s.GroupId
 GO
 
-DROP VIEW IF EXISTS HealthGroupChanges_view
-GO
-CREATE VIEW HealthGroupChanges_view
-AS
-SELECT SecondName, FirstName, ThirdName, g.Name AS GroupName, CurrHealth, CurrPE, PrevHealth, PrevPE, h.Date AS 'Update date' FROM Students_table
-	JOIN HealthGroupChanges_table AS h ON h.StudentId = Students_table.StudentId
-	JOIN Groups_table AS g ON g.GroupId = Students_table.GroupId
-GO
-
-SELECT * FROM HealthGroupChanges_view
+SELECT * FROM DataGrid_view
+SELECT * FROM StudentsCertificates_view WHERE StudentId = 3
 
 
 --Процедуры
@@ -237,6 +197,7 @@ BEGIN
 	DECLARE @Num INT = (SELECT TOP 1 MaxCourse FROM Departments_table WHERE DepartmentId = @DepId)
 	WHILE @Num > 0
 	BEGIN
+		PRINT 'Checking course number: ' + CAST(@Num AS VARCHAR)
 		IF NOT EXISTS (SELECT * FROM Courses_table WHERE Number = @Num AND DepartmentId = @DepId)
 			INSERT Courses_table(DepartmentId, Number) VALUES (@DepId, @Num)
 		SET @Num = @Num - 1
@@ -379,10 +340,12 @@ GO
 CREATE PROCEDURE UpdateCourseYear_procedure
 AS
 BEGIN
-	UPDATE Courses_table SET Number = Number + 1
 	DELETE Courses_table
-		WHERE Number > (SELECT TOP 1 MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = Courses_table.DepartmentId)
+		WHERE Number + 1 > (SELECT TOP 1 MaxCourse FROM Departments_table WHERE Departments_table.DepartmentId = Courses_table.DepartmentId)
+	UPDATE Courses_table SET Number = Number + 1
 END
+
+EXEC UpdateCourseYear_procedure
 
 
 
