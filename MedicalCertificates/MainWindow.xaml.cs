@@ -10,26 +10,19 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using System.Data;
 using System.IO;
 using MedicalCertificates.Views.Settings;
 using MedicalCertificates.Views.Report;
+using System.ComponentModel;
 
 namespace MedicalCertificates
 {
@@ -40,6 +33,7 @@ namespace MedicalCertificates
     {
         MedicalCertificatesDbContext db;
         int currGroupId;
+        int lastGroupId;
         int currStudentId;
         DbSet<GroupsTable> groups;
         DbSet<StudentsTable> students;
@@ -59,6 +53,8 @@ namespace MedicalCertificates
                     JsonServices.Write("lastOpenTableId", "1");
                 }
 
+                EnsureCreateDb.EnsureAndCreate($"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;");
+
                 // Инициализация контекста базы данных
                 db = new MedicalCertificatesDbContext();
                 InitializeComponent();
@@ -76,6 +72,8 @@ namespace MedicalCertificates
 
                 currStudentId = -1;
                 currGroupId = 1;
+                lastGroupId = 1;
+
                 if (!string.IsNullOrEmpty(JsonServices.ReadByProperty("lastOpenTableId"))
                     && int.TryParse(JsonServices.ReadByProperty("lastOpenTableId"), out currGroupId)
                     && currGroupId > 0
@@ -129,6 +127,14 @@ namespace MedicalCertificates
         {
             // Закрытие приложения при нажатии на кнопку "Закрыть"
             System.Windows.Application.Current.Shutdown();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            JsonServices.Write("lastOpenTableId", lastGroupId.ToString());
+            Application.Current.Shutdown();
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -213,7 +219,7 @@ namespace MedicalCertificates
             }
             var unSortGroup = db.GroupsTables.First(g => g.CourseId
                                 == db.CoursesTables.First(c => c.DepartmentId
-                                == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
+                                == db.DepartmentsTables.First(d => d.DepartmentId == 1)
                                 .DepartmentId)
                                 .CourseId)
                                 .GroupId;
@@ -254,6 +260,7 @@ namespace MedicalCertificates
         {
             var group = ((sender as Button).DataContext as GroupsTable);
             currGroupId = group.GroupId;
+            lastGroupId = currGroupId;
             currStudentId = -1;
 
             UpdateGridData();
@@ -265,6 +272,7 @@ namespace MedicalCertificates
         {
             var student = ((sender as Button).DataContext as StudentsTable);
             currStudentId = student.StudentId;
+            lastGroupId = currGroupId;
             currGroupId = -1;
 
             UpdateGridData();
@@ -435,6 +443,7 @@ namespace MedicalCertificates
             {
                 var student = db.StudentsTables.First(s => s.StudentId == (dataGrid.SelectedItem as DataGridView).StudentId);
                 currStudentId = student.StudentId;
+                lastGroupId = currGroupId;
                 currGroupId = -1;
 
                 UpdateGridData();
@@ -480,7 +489,7 @@ namespace MedicalCertificates
                         var rowCount = worksheet.LastRowUsed().RowNumber();
                         var group = db.GroupsTables.First(g => g.CourseId
                                 == db.CoursesTables.First(c => c.DepartmentId
-                                == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
+                                == db.DepartmentsTables.First(d => d.DepartmentId == 1)
                                 .DepartmentId)
                                 .CourseId)
                                 .GroupId;
@@ -507,6 +516,7 @@ namespace MedicalCertificates
                         }
 
                         currGroupId = group;
+                        lastGroupId = currGroupId;
                         currStudentId = -1;
 
                         UpdateGridData();
@@ -564,6 +574,7 @@ namespace MedicalCertificates
                 var student = db.StudentsTables.FirstOrDefault(s => s.SecondName == arr[0]
                 && s.FirstName.StartsWith(arr[1].Substring(0, 1)) && s.ThirdName.StartsWith(arr[2].Substring(0, 1)));
                 currStudentId = student.StudentId;
+                lastGroupId = currGroupId;
                 currGroupId = -1;
 
                 UpdateGridData();
@@ -574,6 +585,7 @@ namespace MedicalCertificates
             {
                 var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
                 currGroupId = group.GroupId;
+                lastGroupId = currGroupId;
                 currStudentId = -1;
 
                 UpdateGridData();
