@@ -10,7 +10,7 @@ namespace MedicalCertificates.Models
         public int CertificateId { get; set; }
         public string FirstName { get; set; } = null!;
         public string SecondName { get; set; } = null!;
-        public string ThirdName { get; set; } = null!;
+        public string? ThirdName { get; set; }
         public string GroupName { get; set; } = null!;
         public DateTime BirthDate { get; set; }
         public string HealthGroup { get; set; } = null!;

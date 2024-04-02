@@ -70,6 +70,10 @@ CREATE TABLE Groups_table (
 )
 GO
 
+INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Неопределенные', 999)
+INSERT INTO Courses_table(DepartmentId, Number) VALUES (1, 99)
+INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
+
 CREATE TABLE Students_table (
 	StudentId INT PRIMARY KEY IDENTITY NOT NULL,
 	GroupId INT NOT NULL,
@@ -169,9 +173,7 @@ BEGIN
 END
 GO
 
-INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Неопределенные', 999)
-INSERT INTO Courses_table(DepartmentId, Number) VALUES (1, 99)
-INSERT INTO Groups_table(CourseId, Name) VALUES (1, '####')
+
 
 INSERT INTO Departments_table(Name, MaxCourse) VALUES (N'Инф. тех.', 4), (N'Тест', 3)
 INSERT INTO Courses_table(Number, DepartmentId) VALUES (3, 2) 

@@ -38,7 +38,7 @@ namespace MedicalCertificates.Views.Create
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
 
-                isValid = new bool[6] { false, false, false, false, false, false };
+                isValid = new bool[6] { false, false, true, false, false, false };
             }
             catch (Exception ex)
             {

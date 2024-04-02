@@ -8,7 +8,7 @@ namespace MedicalCertificates.Models
         public long? RowNum { get; set; }
         public string FirstName { get; set; } = null!;
         public string SecondName { get; set; } = null!;
-        public string ThirdName { get; set; } = null!;
+        public string? ThirdName { get; set; }
         public string GroupName { get; set; } = null!;
         public string Pegroup { get; set; } = null!;
         public int Course { get; set; }

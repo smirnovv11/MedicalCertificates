@@ -12,6 +12,7 @@ namespace MedicalCertificates.Views.Report
         ShortGroup,
         Course,
         Department,
-        TotalReport
+        TotalReport,
+        ChangedHealth
     }
 }

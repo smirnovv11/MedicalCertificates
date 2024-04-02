@@ -14,7 +14,7 @@ namespace MedicalCertificates.Models
         public int GroupId { get; set; }
         public string FirstName { get; set; } = null!;
         public string SecondName { get; set; } = null!;
-        public string ThirdName { get; set; } = null!;
+        public string? ThirdName { get; set; }
         public DateTime BirthDate { get; set; }
 
         public virtual GroupsTable Group { get; set; } = null!;

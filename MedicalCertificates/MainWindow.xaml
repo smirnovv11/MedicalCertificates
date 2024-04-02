@@ -107,6 +107,7 @@
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группе" Click="GroupReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделений" Click="AllDepReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы" Click="HealthList_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Изменившиеся группы здоровья" Click="ChangedHealthReport_Click"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>

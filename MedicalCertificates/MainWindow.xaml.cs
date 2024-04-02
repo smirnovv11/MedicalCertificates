@@ -53,9 +53,10 @@ namespace MedicalCertificates
                 // Если файл настроек не существует, создаем его с начальными значениями
                 if (!File.Exists(jsonPath))
                 {
-                    JsonServices.Write("dbname", "DESKTOP-UTKFT1Q\\SQLEXPRESS");
+                    JsonServices.Write("dbname", "(localdb)\\MSSQLLocalDB");
                     JsonServices.Write("warningPeriod", "3");
                     JsonServices.Write("autoCourses", "true");
+                    JsonServices.Write("lastOpenTableId", "1");
                 }
 
                 // Инициализация контекста базы данных
@@ -73,12 +74,23 @@ namespace MedicalCertificates
                 groups = db.GroupsTables;
                 students = db.StudentsTables;
 
-                // Обновление данных в дереве
-                UpdateTreeData();
                 currStudentId = -1;
-                currGroupId = -1;
+                currGroupId = 1;
+                if (!string.IsNullOrEmpty(JsonServices.ReadByProperty("lastOpenTableId"))
+                    && int.TryParse(JsonServices.ReadByProperty("lastOpenTableId"), out currGroupId)
+                    && currGroupId > 0
+                    && db.GroupsTables.FirstOrDefault(g => g.GroupId == currGroupId) != null)
+                    currGroupId = int.Parse(JsonServices.ReadByProperty("lastOpenTableId"));
+                else
+                {
+                    JsonServices.Write("lastOpenTableId", "1");
+                    currGroupId = 1;
+                }
 
-                TableLabel.Text = "Выберите группу или учащегося для просмотра информации";
+                TableLabel.Text = $"Листок здоровья группы {db.GroupsTables.First(g => g.GroupId == currGroupId).Name} ({db.CoursesTables.First(c => c.CourseId == db.GroupsTables.First(g => g.GroupId == currGroupId).CourseId).Number} курс)";
+
+                // Обновление данных
+                UpdateAllDbData();
 
 
             }
@@ -466,13 +478,6 @@ namespace MedicalCertificates
                     {
                         var worksheet = workbook.Worksheets.Worksheet(1);
                         var rowCount = worksheet.LastRowUsed().RowNumber();
-
-                        var studentId = 1;
-                        if (db.StudentsTables.Count() != 0)
-                        {
-                            studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).FirstOrDefault().StudentId + 1;
-                        }
-
                         var group = db.GroupsTables.First(g => g.CourseId
                                 == db.CoursesTables.First(c => c.DepartmentId
                                 == db.DepartmentsTables.First(d => d.Name == "Неопределенные")
@@ -480,7 +485,7 @@ namespace MedicalCertificates
                                 .CourseId)
                                 .GroupId;
 
-                        for (int row = 2; row <= rowCount; ++row, studentId++)
+                        for (int row = 2; row <= rowCount; ++row)
                         {
                             var groupId = new SqlParameter("@GroupId", group);
                             var firstName = new SqlParameter("@FirstName", worksheet.Cell(row, 2).GetValue<String>());
@@ -489,6 +494,7 @@ namespace MedicalCertificates
                             var birthDate = new SqlParameter("@BirthDate", DateTime.Parse(worksheet.Cell(row, 4).GetValue<String>()));
 
                             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateStudent_procedure @GroupId, @FirstName, @SecondName, @ThirdName, @BirthDate", groupId, firstName, secondName, thirdName, birthDate);
+                            var studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).First().StudentId;
 
                             var studentParam = new SqlParameter("@StudentId", studentId);
                             var healthId = new SqlParameter("@Health", 1);
@@ -608,6 +614,33 @@ namespace MedicalCertificates
         private void AllReport_Click(object sender, RoutedEventArgs e)
         {
             OpenReportSettings(ReportType.TotalReport);
+        }
+
+        private void ChangedHealthReport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
+                saveFileDialog.Title = "Сохранить файл Excel";
+
+                var res = db.HealthGroupChangesViews.OrderByDescending(s => s.UpdateDate).ToList();
+                if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
+                {
+                    string filePath = saveFileDialog.FileName;
+                    ChangeHealthReport.ExportToExcel(res, filePath, "Отчет по изменившимся группам здоровья");
+                }
+                else
+                    return;
+
+                var alert = new Alert("Успешно", "Отчет по изменившимся группам здоровья был успешно создан.");
+                alert.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                alert.ShowDialog();
+            }
         }
 
         private void OpenReportSettings(ReportType type)

@@ -19,7 +19,7 @@ namespace MedicalCertificates.Views.Report
 
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Sheet1");
+                var worksheet = workbook.Worksheets.Add("Лист1");
 
 
                 worksheet.Cell(1, 1).Value = title;
