@@ -9,16 +9,16 @@ namespace MedicalCertificates.Services
 {
     public static class EnsureCreateDb
     {
-        public static void EnsureAndCreate(string connectionString)
+        public static void EnsureAndCreate()
         {
             var db = new MedicalCertificatesDbContext();
             if (!db.Database.CanConnect())
             {
-                Create(connectionString);
+                Create();
             }
         }
 
-        public static bool Create(string connectionString)
+        public static bool Create()
         {
             string sqlConnectionString = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=master;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
             FileInfo file = new FileInfo("CreateQuery.sql");

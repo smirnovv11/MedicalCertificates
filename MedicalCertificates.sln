@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalCertificates", "MedicalCertificates\MedicalCertificates.csproj", "{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalCertificates", "MedicalCertificates\MedicalCertificates.csproj", "{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{C5BFCF34-647E-41E0-AF4E-919C22C06D5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5BFCF34-647E-41E0-AF4E-919C22C06D5F}.Debug|Any CPU.ActiveCfg = Debug
+		{C5BFCF34-647E-41E0-AF4E-919C22C06D5F}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

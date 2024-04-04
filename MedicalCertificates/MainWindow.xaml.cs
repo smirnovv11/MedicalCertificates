@@ -24,6 +24,7 @@ using MedicalCertificates.Views.Settings;
 using MedicalCertificates.Views.Report;
 using System.ComponentModel;
 
+
 namespace MedicalCertificates
 {
     /// <summary>
@@ -53,7 +54,7 @@ namespace MedicalCertificates
                     JsonServices.Write("lastOpenTableId", "1");
                 }
 
-                EnsureCreateDb.EnsureAndCreate($"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;");
+                EnsureCreateDb.EnsureAndCreate();
 
                 // Инициализация контекста базы данных
                 db = new MedicalCertificatesDbContext();
@@ -95,7 +96,7 @@ namespace MedicalCertificates
             catch (Exception ex)
             {
                 // Вывод сообщения об ошибке, если не удалось подключиться к базе данных
-                var alert = new Alert("Ошибка!", "Ошибка: Не удалось подключится к базе данных либо база данных повреждена.", AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка: Не удалось подключится к базе данных либо база данных повреждена.\nПодробности: " + ex.Message, AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -133,7 +134,10 @@ namespace MedicalCertificates
         {
             base.OnClosing(e);
 
-            JsonServices.Write("lastOpenTableId", lastGroupId.ToString());
+            if (lastGroupId > 0)
+                JsonServices.Write("lastOpenTableId", lastGroupId.ToString());
+            else
+                JsonServices.Write("lastOpenTableId", "1");
             Application.Current.Shutdown();
         }
 
