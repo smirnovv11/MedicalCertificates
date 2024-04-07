@@ -25,33 +25,47 @@ namespace MedicalCertificates.Views.Settings
     /// </summary>
     public partial class Settings : Window
     {
-        public Settings()
+        public Settings(bool isFirstLaunch = false)
         {
             InitializeComponent();
 
-            dbnameTb.Text = JsonServices.ReadByProperty("dbname");
-            
-            var period = Int32.Parse(JsonServices.ReadByProperty("warningPeriod"));
-            switch (period)
+            try
             {
-                case 1:
-                    warningPeriodCb.SelectedIndex = 0;
-                    break;
-                case 3:
-                    warningPeriodCb.SelectedIndex = 1;
-                    break;
-                case 4:
-                    warningPeriodCb.SelectedIndex = 2;
-                    break;
-                case 6:
-                    warningPeriodCb.SelectedIndex = 3;
-                    break;
-                default:
-                    warningPeriodCb.SelectedIndex = 1;
-                    break;
-            }
+                dbnameTb.Text = JsonServices.ReadByProperty("dbname");
 
-            autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
+                var period = Int32.Parse(JsonServices.ReadByProperty("warningPeriod"));
+                switch (period)
+                {
+                    case 1:
+                        warningPeriodCb.SelectedIndex = 0;
+                        break;
+                    case 3:
+                        warningPeriodCb.SelectedIndex = 1;
+                        break;
+                    case 4:
+                        warningPeriodCb.SelectedIndex = 2;
+                        break;
+                    case 6:
+                        warningPeriodCb.SelectedIndex = 3;
+                        break;
+                    default:
+                        warningPeriodCb.SelectedIndex = 1;
+                        break;
+                }
+
+                autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
+
+                if (isFirstLaunch)
+                {
+                    BackupPanel.Visibility = Visibility.Collapsed;
+                    this.Height = 450;
+                }
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)

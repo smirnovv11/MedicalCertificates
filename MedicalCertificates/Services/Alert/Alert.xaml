@@ -25,7 +25,7 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border BorderThickness="1" BorderBrush="#081724" Background="#FFF">
+    <Border BorderThickness="1" Name="AlertBorder" BorderBrush="#081724" Background="#FFF">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>

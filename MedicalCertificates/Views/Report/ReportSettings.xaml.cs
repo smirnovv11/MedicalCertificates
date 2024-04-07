@@ -34,36 +34,44 @@ namespace MedicalCertificates.Views.Report
         {
             InitializeComponent();
 
-            this.type = type;
-            switch (type)
+            try
             {
-                case ReportType.Group:
-                case ReportType.ShortGroup:
-                    break;
-                case ReportType.Course:
-                    groupPanel.Visibility = Visibility.Collapsed;
-                    break;
-                case ReportType.Department:
-                    groupPanel.Visibility = Visibility.Collapsed;
-                    coursePanel.Visibility = Visibility.Collapsed;
-                    break;
-                case ReportType.TotalReport:
-                    groupGb.Visibility = Visibility.Collapsed;
-                    this.Width = 400;
-                    this.Height = 350;
-                    groupPanel.Visibility = Visibility.Collapsed;
-                    coursePanel.Visibility = Visibility.Collapsed;
-                    departmentPanel.Visibility = Visibility.Collapsed;
-                    break;
-            }
+                this.type = type;
+                switch (type)
+                {
+                    case ReportType.Group:
+                    case ReportType.ShortGroup:
+                        break;
+                    case ReportType.Course:
+                        groupPanel.Visibility = Visibility.Collapsed;
+                        break;
+                    case ReportType.Department:
+                        groupPanel.Visibility = Visibility.Collapsed;
+                        coursePanel.Visibility = Visibility.Collapsed;
+                        break;
+                    case ReportType.TotalReport:
+                        groupGb.Visibility = Visibility.Collapsed;
+                        this.Width = 400;
+                        this.Height = 350;
+                        groupPanel.Visibility = Visibility.Collapsed;
+                        coursePanel.Visibility = Visibility.Collapsed;
+                        departmentPanel.Visibility = Visibility.Collapsed;
+                        break;
+                }
 
-            db = new MedicalCertificatesDbContext();
-            if (type != ReportType.TotalReport)
-            {
-                departmentcb.ItemsSource = db.DepartmentsTables.ToList();
-                departmentcb.DisplayMemberPath = "Name";
+                db = new MedicalCertificatesDbContext();
+                if (type != ReportType.TotalReport)
+                {
+                    departmentcb.ItemsSource = db.DepartmentsTables.ToList();
+                    departmentcb.DisplayMemberPath = "Name";
+                }
+                isValid = true;
             }
-            isValid = true;
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)

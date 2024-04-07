@@ -21,7 +21,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_30BC4D7C774B4AADBC0DC239438F584A"
+        "MsmKey" = "8:_1618F19381BA4B75A6F1C95A0C47EF32"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -33,13 +33,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_702C4DA34CCC4F92BD1B586F0251E640"
+        "MsmKey" = "8:_96A804117DFD404A8E168FBB577A6007"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_96A804117DFD404A8E168FBB577A6007"
+        "MsmKey" = "8:_C51A0D02551A40F195DCDEAE6AA4071B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -85,25 +85,10 @@
                     "Name" = "8:Среда выполнения .NET 6.0.13 (x86)"
                     "ProductCode" = "8:Microsoft.NetCore.CoreRuntime.6.0.x86"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.CoreRuntime.7.0.x64"
-                    {
-                    "Name" = "8:Среда выполнения .NET 7.0.2 (x64)"
-                    "ProductCode" = "8:Microsoft.NetCore.CoreRuntime.7.0.x64"
-                    }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.CoreRuntime.7.0.x86"
-                    {
-                    "Name" = "8:Среда выполнения .NET 7.0.2 (x86)"
-                    "ProductCode" = "8:Microsoft.NetCore.CoreRuntime.7.0.x86"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
                     {
                     "Name" = "8:Среда выполнения .NET для классических приложений 6.0.13 (x64)"
                     "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
-                    }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.7.0.x64"
-                    {
-                    "Name" = "8:Среда выполнения .NET для классических приложений 7.0.2 (x64)"
-                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.7.0.x64"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.SqlServer.SqlLocalDB.15.0"
                     {
@@ -128,6 +113,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -169,7 +170,7 @@
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
+            "Hidden" = "11:TRUE"
             "System" = "11:FALSE"
             "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
@@ -179,17 +180,17 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30BC4D7C774B4AADBC0DC239438F584A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1618F19381BA4B75A6F1C95A0C47EF32"
             {
-            "SourcePath" = "8:..\\MedicalCertificates\\bin\\Debug\\net6.0-windows\\settings.json"
-            "TargetName" = "8:settings.json"
+            "SourcePath" = "8:..\\MedicalCertificates\\bin\\Debug\\net6.0-windows\\MedicalCertificates.deps.json"
+            "TargetName" = "8:MedicalCertificates.deps.json"
             "Tag" = "8:"
             "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
+            "Hidden" = "11:TRUE"
             "System" = "11:FALSE"
             "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
@@ -209,7 +210,7 @@
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
+            "Hidden" = "11:TRUE"
             "System" = "11:FALSE"
             "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
@@ -294,9 +295,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:MedicalCertificates"
+        "ProductName" = "8:MEDICAL CERTIFICATES"
         "ProductCode" = "8:{0573AC2C-6574-4F3A-8AC8-137EA118123D}"
-        "PackageCode" = "8:{5353541F-4DC3-4691-A13F-B749D83E8A1F}"
+        "PackageCode" = "8:{CB68CA00-1555-4A35-9BCB-59B9FD7D31DB}"
         "UpgradeCode" = "8:{6384E691-77C6-44ED-8A28-44CE6E23052F}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -307,11 +308,11 @@
         "Manufacturer" = "8:KBIP"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:MedicalCertificates"
+        "Title" = "8:MEDICAL CERTIFICATES"
         "Subject" = "8:"
         "ARPCONTACT" = "8:KBIP"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
+        "ARPCOMMENTS" = "8:Данное программное средство было разработано с целью обеспечения надежного хранения, эффективной актуализации и управления сведениями о медицинских справках. Оно позволяет не только вести учет данных документов, но и оперативно составлять разнообразные отчеты по хранящимся данным, облегчая тем самым процесс принятия решений в медицинской сфере."
         "ARPURLINFOABOUT" = "8:"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
@@ -416,15 +417,15 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_447D54C691EB40EE8F910B7FB38CD1D3"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_CC338A2D853E4C12A27706E72D482064"
             {
-            "Name" = "8:MedicalCertificates"
+            "Name" = "8:MEDICAL CERTIFICATES"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_702C4DA34CCC4F92BD1B586F0251E640"
+            "Target" = "8:_C51A0D02551A40F195DCDEAE6AA4071B"
             "Folder" = "8:_F541BF3F53584B65AB3A280457F819CB"
             "WorkingFolder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
             "Icon" = "8:_3DE166475BF7470F80F324CF31CE7462"
@@ -829,7 +830,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_702C4DA34CCC4F92BD1B586F0251E640"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C51A0D02551A40F195DCDEAE6AA4071B"
             {
             "SourcePath" = "8:..\\MedicalCertificates\\obj\\Debug\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
@@ -850,7 +851,7 @@
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:PublishItems"
+            "OutputGroupCanonicalName" = "8:PublishItemsOutputGroup"
             "OutputProjectGuid" = "8:{A5B10837-5FCC-4D5B-80F2-5F22D2290DF4}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"

@@ -52,6 +52,9 @@ namespace MedicalCertificates
                     JsonServices.Write("warningPeriod", "3");
                     JsonServices.Write("autoCourses", "true");
                     JsonServices.Write("lastOpenTableId", "1");
+
+                    var settWind = new Settings(true);
+                    settWind.ShowDialog();
                 }
 
                 EnsureCreateDb.EnsureAndCreate();
@@ -211,9 +214,8 @@ namespace MedicalCertificates
             if (currGroupId != null && currGroupId >= 0)
             {
                 db = new MedicalCertificatesDbContext();
-                var group = new SqlParameter("@GroupId", currGroupId);
 
-                res = db.DataGridViews.FromSqlRaw("SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure @GroupId", group).ToList();
+                res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure {currGroupId}").ToList();
             }
             else if (currStudentId != null && currStudentId >= 0)
             {
@@ -251,37 +253,61 @@ namespace MedicalCertificates
 
         private void ShowNote_Click(object sender, RoutedEventArgs e)
         {
-            var text = (dataGrid.SelectedItem as DataGridView).Note;
+            try
+            {
+                var text = (dataGrid.SelectedItem as DataGridView).Note;
 
-            if (text == null || text.Length <= 0)
-                text = "Примечание отсутствует.";
+                if (text == null || text.Length <= 0)
+                    text = "Примечание отсутствует.";
 
-            var alert = new Alert("Примечание", text);
-            alert.ShowDialog();
+                var alert = new Alert("Примечание", text);
+                alert.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void GroupTree_Click(object sender, RoutedEventArgs e)
         {
-            var group = ((sender as Button).DataContext as GroupsTable);
-            currGroupId = group.GroupId;
-            lastGroupId = currGroupId;
-            currStudentId = -1;
+            try
+            {
+                var group = ((sender as Button).DataContext as GroupsTable);
+                currGroupId = group.GroupId;
+                lastGroupId = currGroupId;
+                currStudentId = -1;
 
-            UpdateGridData();
+                UpdateGridData();
 
-            TableLabel.Text = $"Листок здоровья группы {group.Name} ({group.Course.Number} курс)";
+                TableLabel.Text = $"Листок здоровья группы {group.Name} ({group.Course.Number} курс)";
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         private void StudentTree_Click(object sender, RoutedEventArgs e)
         {
-            var student = ((sender as Button).DataContext as StudentsTable);
-            currStudentId = student.StudentId;
-            lastGroupId = currGroupId;
-            currGroupId = -1;
+            try
+            {
+                var student = ((sender as Button).DataContext as StudentsTable);
+                currStudentId = student.StudentId;
+                lastGroupId = currGroupId;
+                currGroupId = -1;
 
-            UpdateGridData();
+                UpdateGridData();
 
-            TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+                TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
 
         #region Addition
@@ -546,58 +572,74 @@ namespace MedicalCertificates
 
         private void SearchForTbData()
         {
-            if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
+            try
             {
-                ContextMenu contextMenu = searchBox.ContextMenu;
-                contextMenu.PlacementTarget = searchBox as UIElement;
-                contextMenu.Placement = PlacementMode.Bottom;
-                contextMenu.IsOpen = true;
-                contextMenu.Items.Clear();
-
-                var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.ToLower().Contains(searchBox.Text.ToLower())).ToList().
-                    Concat(groups.Select(g => g.Name).Where(g => g.ToLower().Contains(searchBox.Text.ToLower())).ToList()).ToList();
-
-                foreach (string el in res)
+                if (searchBox.Text.Length >= 2 && searchBox.Text != "Поиск")
                 {
-                    MenuItem item = new MenuItem();
-                    item.Header = el;
-                    item.StaysOpenOnClick = true;
-                    item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
-                    contextMenu.Items.Add(item);
+                    ContextMenu contextMenu = searchBox.ContextMenu;
+                    contextMenu.PlacementTarget = searchBox as UIElement;
+                    contextMenu.Placement = PlacementMode.Bottom;
+                    contextMenu.IsOpen = true;
+                    contextMenu.Items.Clear();
 
-                    item.Click += OpenSearchResult;
+                    var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.ToLower().Contains(searchBox.Text.ToLower())).ToList().
+                        Concat(groups.Select(g => g.Name).Where(g => g.ToLower().Contains(searchBox.Text.ToLower())).ToList()).ToList();
+
+                    foreach (string el in res)
+                    {
+                        MenuItem item = new MenuItem();
+                        item.Header = el;
+                        item.StaysOpenOnClick = true;
+                        item.Style = App.Current.TryFindResource("PrimaryMenuItem") as Style;
+                        contextMenu.Items.Add(item);
+
+                        item.Click += OpenSearchResult;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
             }
         }
 
         private void OpenSearchResult(object sender, RoutedEventArgs e)
         {
-            string[] arr = (sender as MenuItem).Header.ToString().Split(' ');
-            if (arr.Length > 1)
+            try
             {
-                var student = db.StudentsTables.FirstOrDefault(s => s.SecondName == arr[0]
-                && s.FirstName.StartsWith(arr[1].Substring(0, 1)) && s.ThirdName.StartsWith(arr[2].Substring(0, 1)));
-                currStudentId = student.StudentId;
-                lastGroupId = currGroupId;
-                currGroupId = -1;
+                string[] arr = (sender as MenuItem).Header.ToString().Split(' ');
+                if (arr.Length > 1)
+                {
+                    var student = db.StudentsTables.FirstOrDefault(s => s.SecondName == arr[0]
+                    && s.FirstName.StartsWith(arr[1].Substring(0, 1)) && s.ThirdName.StartsWith(arr[2].Substring(0, 1)));
+                    currStudentId = student.StudentId;
+                    lastGroupId = currGroupId;
+                    currGroupId = -1;
 
-                UpdateGridData();
+                    UpdateGridData();
 
-                TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+                    TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
+                }
+                else
+                {
+                    var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
+                    currGroupId = group.GroupId;
+                    lastGroupId = currGroupId;
+                    currStudentId = -1;
+
+                    UpdateGridData();
+
+                    TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId).Number} курс)";
+                }
+                searchBox.Clear();
+                dataGrid.Focus();
             }
-            else
+            catch (Exception ex)
             {
-                var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
-                currGroupId = group.GroupId;
-                lastGroupId = currGroupId;
-                currStudentId = -1;
-
-                UpdateGridData();
-
-                TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId).Number} курс)";
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
             }
-            searchBox.Clear();
-            dataGrid.Focus();
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -699,7 +741,21 @@ namespace MedicalCertificates
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, "Help.chm");
+            try
+            {
+                if (!File.Exists("Help.chm"))
+                {
+                    var alert = new Alert("Ошибка!", "Ошибка: Файл справки отсутствует, восстановите программу через приложение-установщик");
+                    alert.ShowDialog();
+                }
+
+                System.Windows.Forms.Help.ShowHelp(null, "Help.chm");
+            }
+            catch (Exception ex)
+            {
+                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                alert.ShowDialog();
+            }
         }
         
     }

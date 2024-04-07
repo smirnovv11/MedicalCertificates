@@ -8,7 +8,7 @@
         xmlns:models="clr-namespace:MedicalCertificates.Models"
         xmlns:services="clr-namespace:MedicalCertificates.Services"
         mc:Ignorable="d"
-        Title="MedicalCertificates" Name="StartWindow"  Height="720" Width="1280"
+        Title="MEDICAL CERTIFICATES" Name="StartWindow"  Height="720" Width="1280"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None"
         WindowState="Normal" Loaded="Window_Loaded"
         AllowsTransparency="True" Background="Transparent" Icon="/Images/icon.png">
