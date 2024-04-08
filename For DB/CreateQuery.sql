@@ -524,3 +524,17 @@ BEGIN
 	UPDATE Certificates_table SET HealthGroupId = @HealthGroupId, PEGroupId = @PEGroupId, IssueDate = @IssueDate, ValidDate = @ValidDate, Note = @Note WHERE CertificateId = @Id
 END
 GO
+
+
+INSERT INTO Departments_table(Name, MaxCourse)
+	VALUES (N'ПОИТ', 4), (N'Бух. учет, анализ и контроль', 3), (N'Планово-экономическая и аналитическая деятельность', 3), (N'Банковская деятельность', 3),
+	(N'Правоведение', 3), (N'Торговая деятельность', 3), (N'Операционная деятельность в логистике', 3)
+
+INSERT INTO Courses_table(DepartmentId, Number)
+	VALUES (2, 1), (2, 2), (2, 3), (2, 4),
+			(3, 1), (3, 2), (3, 3),
+			(4, 1), (4, 2), (4, 3),
+			(5, 1), (5, 2), (5, 3),
+			(6, 1), (6, 2), (6, 3),
+			(7, 1), (7, 2), (7, 3),
+			(8, 1), (8, 2), (8, 3)
