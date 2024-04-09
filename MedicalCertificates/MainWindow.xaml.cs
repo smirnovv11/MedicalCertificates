@@ -32,7 +32,7 @@ namespace MedicalCertificates
     /// </summary>
     public partial class MainWindow : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         int currGroupId;
         int lastGroupId;
         int currStudentId;
@@ -60,7 +60,7 @@ namespace MedicalCertificates
                 EnsureCreateDb.EnsureAndCreate();
 
                 // Инициализация контекста базы данных
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 InitializeComponent();
 
                 // Установка культуры и формата даты для текущего потока
@@ -190,7 +190,7 @@ namespace MedicalCertificates
         {
             if (forceUpdate)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 TreeMenu.ItemsSource = db.DepartmentsTables
                               .Include(d => d.CoursesTables.OrderBy(c => c.Number))
                               .ThenInclude(c => c.GroupsTables)
@@ -199,7 +199,7 @@ namespace MedicalCertificates
             }
             else if (currGroupId != null && currGroupId >= 0)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 TreeMenu.ItemsSource = db.DepartmentsTables
                               .Include(d => d.CoursesTables.OrderBy(c => c.Number))
                               .ThenInclude(c => c.GroupsTables)
@@ -213,13 +213,13 @@ namespace MedicalCertificates
             List<DataGridView>? res = new List<DataGridView>();
             if (currGroupId != null && currGroupId >= 0)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure {currGroupId}").ToList();
             }
             else if (currStudentId != null && currStudentId >= 0)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 res = db.DataGridViews.Where(s => s.StudentId == currStudentId).ToList();
             }

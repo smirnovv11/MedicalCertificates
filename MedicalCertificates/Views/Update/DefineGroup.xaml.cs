@@ -25,7 +25,7 @@ namespace MedicalCertificates.Views.Update
     /// </summary>
     public partial class DefineGroup : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
         IList students;
 
@@ -34,7 +34,7 @@ namespace MedicalCertificates.Views.Update
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 students = collection;
 
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();

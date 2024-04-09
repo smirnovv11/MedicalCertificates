@@ -26,7 +26,7 @@ namespace MedicalCertificates.Views.Create
     /// </summary>
     public partial class AddDepartment : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public AddDepartment()
@@ -34,7 +34,7 @@ namespace MedicalCertificates.Views.Create
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
                 isValid = new bool[2] { false, true };
@@ -137,7 +137,7 @@ namespace MedicalCertificates.Views.Create
 
         private void AddCourses()
         {
-            db = new MedicalCertificatesDbContext();
+            db = new MedCertificatesDbContext();
             var id = new SqlParameter("@DepId", db.DepartmentsTables.First(d => d.Name == nametb.Text).DepartmentId);
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC AutoCreateCourses_procedure @DepId", id);
         }

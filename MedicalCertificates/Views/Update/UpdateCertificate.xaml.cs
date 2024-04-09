@@ -23,7 +23,7 @@ namespace MedicalCertificates.Views.Update
     /// </summary>
     public partial class UpdateCertificate : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
         CertificatesTable item;
         public bool toStudent;
@@ -33,7 +33,7 @@ namespace MedicalCertificates.Views.Update
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 healthGroupcb.ItemsSource = db.HealthGroupTables.ToList();
                 healthGroupcb.DisplayMemberPath = "HealthGroup";

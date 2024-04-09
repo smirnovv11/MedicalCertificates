@@ -23,7 +23,7 @@ namespace MedicalCertificates.Views.Update
     /// </summary>
     public partial class UpdateStudent : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
         int studentId;
 
@@ -32,7 +32,7 @@ namespace MedicalCertificates.Views.Update
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 this.studentId = studentId;
 
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();

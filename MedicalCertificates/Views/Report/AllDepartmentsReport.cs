@@ -12,7 +12,7 @@ namespace MedicalCertificates.Views.Report
     {
         public static void ExportToExcel(List<TotalReportView> data, string filePath, string title)
         {
-            var db = new MedicalCertificatesDbContext();
+            var db = new MedCertificatesDbContext();
             var groups = db.GroupsTables.ToList();
             var courses = db.CoursesTables.ToList();
             var departments = db.DepartmentsTables.ToList();

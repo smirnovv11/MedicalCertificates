@@ -15,7 +15,7 @@ namespace MedicalCertificates.Services
     {
         public static void EnsureAndCreate()
         {
-            var db = new MedicalCertificatesDbContext();
+            var db = new MedCertificatesDbContext();
             if (!db.Database.CanConnect())
             {
                 var alert = new AcceptAlert("Внимание!", "База данных «MedicalCertificates» отсутствует на данном сервере.\nДля продолжения работы необходимо создать базу данных. Вы желаете продолжить?");

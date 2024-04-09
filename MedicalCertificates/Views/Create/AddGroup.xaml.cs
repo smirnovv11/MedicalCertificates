@@ -24,7 +24,7 @@ namespace MedicalCertificates.Views.Create
     /// </summary>
     public partial class AddGroup : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
         int maxCourseValue;
 
@@ -33,7 +33,7 @@ namespace MedicalCertificates.Views.Create
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
@@ -162,7 +162,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddDepartment();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
             }
         }
@@ -171,7 +171,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddCourse();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 if (departmentcb.SelectedIndex >= 0)
                 {
                     coursecb.IsEnabled = true;

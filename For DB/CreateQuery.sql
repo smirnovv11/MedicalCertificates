@@ -6,19 +6,19 @@ DROP LOGIN Nurse
 GO
 CREATE LOGIN Nurse WITH PASSWORD = 'med321';
 
-DROP DATABASE IF EXISTS MedicalCertificatesDb
+DROP DATABASE IF EXISTS MedCertificatesDb
 GO
-CREATE DATABASE MedicalCertificatesDb
+CREATE DATABASE MedCertificatesDb
 GO
-USE MedicalCertificatesDb
+USE MedCertificatesDb
 
-USE MedicalCertificatesDb;
+USE MedCertificatesDb;
 CREATE USER Nurse FOR LOGIN Nurse;
 
 EXEC sp_addrolemember 'db_datareader', 'Nurse';
 EXEC sp_addrolemember 'db_datawriter', 'Nurse';
 
-ALTER DATABASE MedicalCertificatesDb
+ALTER DATABASE MedCertificatesDb
 SET RECOVERY FULL;
 GO
 SET DATEFORMAT dmy;  

@@ -24,7 +24,7 @@ namespace MedicalCertificates.Views.Update
     /// </summary>
     public partial class UpdateGroup : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public UpdateGroup()
@@ -32,7 +32,7 @@ namespace MedicalCertificates.Views.Update
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
 

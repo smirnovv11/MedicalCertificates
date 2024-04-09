@@ -127,8 +127,8 @@ namespace MedicalCertificates.Views.Settings
                 progressBar.Visibility = Visibility.Visible;
                 progressBar.Value = 70;
 
-                var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedicalCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
-                await Task.Run(() => BackupDatabaseAndLog(conn, "MedicalCertificatesDb", folderPath));
+                var conn = $"Data Source={JsonServices.ReadByProperty("dbname")};Initial Catalog=MedCertificatesDb;Integrated Security=True; Trusted_Connection=True; TrustServerCertificate=true;";
+                await Task.Run(() => BackupDatabaseAndLog(conn, "MedCertificatesDb", folderPath));
 
                 progressBar.Visibility = Visibility.Hidden;
 
@@ -201,7 +201,7 @@ namespace MedicalCertificates.Views.Settings
                     progressBar.Visibility = Visibility.Visible;
 
                     var progress = new Progress<int>(value => progressBar.Value = value);
-                    await Task.Run(() => RestoreDatabaseAndLog(conn, "MedicalCertificatesDb", folderPath, progress));
+                    await Task.Run(() => RestoreDatabaseAndLog(conn, "MedCertificatesDb", folderPath, progress));
 
                     progressBar.Visibility = Visibility.Hidden;
 

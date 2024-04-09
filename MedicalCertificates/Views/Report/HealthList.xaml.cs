@@ -25,7 +25,7 @@ namespace MedicalCertificates.Views.Report
     /// </summary>
     public partial class HealthList : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public HealthList()
@@ -33,7 +33,7 @@ namespace MedicalCertificates.Views.Report
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentscb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentscb.DisplayMemberPath = "Name";
 

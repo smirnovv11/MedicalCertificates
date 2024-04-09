@@ -25,7 +25,7 @@ namespace MedicalCertificates.Views.Create
     /// </summary>
     public partial class AddStudent : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public AddStudent()
@@ -33,7 +33,7 @@ namespace MedicalCertificates.Views.Create
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
@@ -152,7 +152,7 @@ namespace MedicalCertificates.Views.Create
                 var askAlert = new AcceptAlert("Добавление справки", "Учащийся добавлен. Добавить справку для нового учащегося?", AlertType.Info);
                 if (askAlert.ShowDialog() == true)
                 {
-                    db = new MedicalCertificatesDbContext();
+                    db = new MedCertificatesDbContext();
                     StudentsTable student = db.StudentsTables.First(s => s.FirstName == firstNametb2.Text && s.SecondName == secondNametb1.Text && s.ThirdName == thirdNametb3.Text);
 
                     var addCert = new AddCertificate(student);
@@ -197,7 +197,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddDepartment();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
             }
         }
@@ -206,7 +206,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddGroup();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 if (departmentcb.SelectedIndex >= 0)
                 {
                     groupcb.IsEnabled = true;

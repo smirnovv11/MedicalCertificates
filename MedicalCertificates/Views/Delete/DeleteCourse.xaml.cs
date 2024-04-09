@@ -23,7 +23,7 @@ namespace MedicalCertificates.Views.Delete
     /// </summary>
     public partial class DeleteCourse : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public DeleteCourse()
@@ -31,7 +31,7 @@ namespace MedicalCertificates.Views.Delete
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentscb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentscb.DisplayMemberPath = "Name";
 

@@ -23,7 +23,7 @@ namespace MedicalCertificates.Views.Create
     /// </summary>
     public partial class AddCertificate : Window
     {
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         bool[] isValid;
 
         public AddCertificate()
@@ -31,7 +31,7 @@ namespace MedicalCertificates.Views.Create
             try
             {
                 InitializeComponent();
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
 
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
@@ -282,7 +282,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddDepartment();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
             }
         }
@@ -292,7 +292,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddGroup();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 if (departmentcb.SelectedIndex >= 0)
                 {
                     groupcb.IsEnabled = true;
@@ -308,7 +308,7 @@ namespace MedicalCertificates.Views.Create
             var wind = new AddStudent();
             if (wind.ShowDialog() == true)
             {
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 if (groupcb.SelectedIndex >= 0)
                 {
                     studentcb.IsEnabled = true;

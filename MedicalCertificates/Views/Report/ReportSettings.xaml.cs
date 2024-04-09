@@ -27,7 +27,7 @@ namespace MedicalCertificates.Views.Report
     public partial class ReportSettings : Window
     {
         private bool isValid;
-        MedicalCertificatesDbContext db;
+        MedCertificatesDbContext db;
         ReportType type;
 
         public ReportSettings(ReportType type)
@@ -59,7 +59,7 @@ namespace MedicalCertificates.Views.Report
                         break;
                 }
 
-                db = new MedicalCertificatesDbContext();
+                db = new MedCertificatesDbContext();
                 if (type != ReportType.TotalReport)
                 {
                     departmentcb.ItemsSource = db.DepartmentsTables.ToList();
