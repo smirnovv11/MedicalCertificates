@@ -44,7 +44,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<CertificatesTable>(entity =>
             {
                 entity.HasKey(e => e.CertificateId)
-                    .HasName("PK__Certific__BBF8A7C1AB5DAC4D");
+                    .HasName("PK__Certific__BBF8A7C175C06FCD");
 
                 entity.ToTable("Certificates_table");
 
@@ -73,7 +73,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<CoursesTable>(entity =>
             {
                 entity.HasKey(e => e.CourseId)
-                    .HasName("PK__Courses___C92D71A71E96DD8C");
+                    .HasName("PK__Courses___C92D71A73F311BF8");
 
                 entity.ToTable("Courses_table");
 
@@ -115,11 +115,11 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<DepartmentsTable>(entity =>
             {
                 entity.HasKey(e => e.DepartmentId)
-                    .HasName("PK__Departme__B2079BED194DB831");
+                    .HasName("PK__Departme__B2079BEDE2BB8D18");
 
                 entity.ToTable("Departments_table");
 
-                entity.HasIndex(e => e.Name, "UQ__Departme__737584F6A8B9C90A")
+                entity.HasIndex(e => e.Name, "UQ__Departme__737584F688CE2768")
                     .IsUnique();
 
                 entity.Property(e => e.MaxCourse).HasDefaultValueSql("('3')");
@@ -130,7 +130,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<GroupsTable>(entity =>
             {
                 entity.HasKey(e => e.GroupId)
-                    .HasName("PK__Groups_t__149AF36A3EA8877F");
+                    .HasName("PK__Groups_t__149AF36ACBF511C3");
 
                 entity.ToTable("Groups_table");
 
@@ -204,7 +204,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<HealthGroupTable>(entity =>
             {
                 entity.HasKey(e => e.HealthGroupId)
-                    .HasName("PK__HealthGr__041005CF0BDE9EB0");
+                    .HasName("PK__HealthGr__041005CF29AA6C09");
 
                 entity.ToTable("HealthGroup_table");
 
@@ -214,7 +214,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<PegroupTable>(entity =>
             {
                 entity.HasKey(e => e.PegroupId)
-                    .HasName("PK__PEGroup___017BF80FB8DFF591");
+                    .HasName("PK__PEGroup___017BF80F057C2FAF");
 
                 entity.ToTable("PEGroup_table");
 
@@ -253,7 +253,7 @@ namespace MedicalCertificates.Models
             modelBuilder.Entity<StudentsTable>(entity =>
             {
                 entity.HasKey(e => e.StudentId)
-                    .HasName("PK__Students__32C52B99ECCA9C26");
+                    .HasName("PK__Students__32C52B99A94D9AFE");
 
                 entity.ToTable("Students_table");
 
@@ -283,6 +283,10 @@ namespace MedicalCertificates.Models
 
                 entity.Property(e => e.GroupName).HasMaxLength(5);
 
+                entity.Property(e => e.HealthGroup).HasMaxLength(20);
+
+                entity.Property(e => e.IssueDate).HasColumnType("date");
+
                 entity.Property(e => e.Pegroup)
                     .HasMaxLength(20)
                     .HasColumnName("PEGroup");
@@ -290,6 +294,8 @@ namespace MedicalCertificates.Models
                 entity.Property(e => e.SecondName).HasMaxLength(20);
 
                 entity.Property(e => e.ThirdName).HasMaxLength(20);
+
+                entity.Property(e => e.ValidDate).HasColumnType("date");
             });
 
             OnModelCreatingPartial(modelBuilder);

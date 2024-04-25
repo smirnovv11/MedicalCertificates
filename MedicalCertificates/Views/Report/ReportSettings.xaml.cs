@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -40,7 +41,7 @@ namespace MedicalCertificates.Views.Report
                 switch (type)
                 {
                     case ReportType.Group:
-                    case ReportType.ShortGroup:
+                    case ReportType.ShortGroupPE:
                         break;
                     case ReportType.Course:
                         groupPanel.Visibility = Visibility.Collapsed;
@@ -185,7 +186,7 @@ namespace MedicalCertificates.Views.Report
                     title = $"Отчет по курсу {(courseCb.SelectedItem as CoursesTable).Number}, отделение {(departmentcb.SelectedItem as DepartmentsTable).Name}";
                     res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsCourse_procedure {(courseCb.SelectedItem as CoursesTable).CourseId}").ToList();
                     break;
-                case ReportType.ShortGroup:
+                case ReportType.ShortGroupPE:
                 case ReportType.Group:
                     title = $"Отчет по группе {(groupcb.SelectedItem as GroupsTable).Name}";
                     res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure {(groupcb.SelectedItem as GroupsTable).GroupId}").ToList();
@@ -209,10 +210,11 @@ namespace MedicalCertificates.Views.Report
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
             saveFileDialog.Title = "Сохранить файл Excel";
+            string filePath = "";
             if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
             {
-                string filePath = saveFileDialog.FileName;
-                if (type == ReportType.ShortGroup)
+                filePath = saveFileDialog.FileName;
+                if (type == ReportType.ShortGroupPE)
                 {
                     title = $"Листок здоровья группы {(groupcb.SelectedItem as GroupsTable).Name}";
                     ExportToExcelShort(res, filePath, title);
@@ -228,6 +230,9 @@ namespace MedicalCertificates.Views.Report
             var sucAlert = new Alert("Успешно", title + " был успешно создан.");
             sucAlert.ShowDialog();
 
+            //Открываем файл в Excel
+            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+
             Close();
         }
 
@@ -241,16 +246,18 @@ namespace MedicalCertificates.Views.Report
 
 
                     worksheet.Cell(1, 1).Value = title;
+                    worksheet.Row(1).Height = 45;
                     worksheet.Range(1, 1, 1, 6).Merge().Style
                         .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                        .Alignment.SetVertical(XLAlignmentVerticalValues.Center)
                         .Font.SetBold()
                         .Font.FontSize = 14;
 
-                    worksheet.Cell(3, 1).Value = "Фамилия";
-                    worksheet.Cell(3, 2).Value = "Имя";
-                    worksheet.Cell(3, 3).Value = "Отчетсво";
-                    worksheet.Cell(3, 4).Value = "Группа здоровья";
-                    worksheet.Cell(3, 5).Value = "Группа по физкультуре";
+                    worksheet.Cell(3, 1).Value = "ФИО Учащегося";
+                    worksheet.Cell(3, 2).Value = "Дата рождения";
+                    worksheet.Cell(3, 3).Value = "Группа здоровья";
+                    worksheet.Cell(3, 4).Value = "Группа по физкультуре";
+                    worksheet.Cell(3, 5).Value = "Справка открыта";
                     worksheet.Cell(3, 6).Value = "Справка годна";
 
                     worksheet.Range(3, 1, 3, 6).Style.Font.SetBold();
@@ -258,20 +265,20 @@ namespace MedicalCertificates.Views.Report
 
                     for (int i = 0; i < data.Count; i++)
                     {
-                        worksheet.Cell(i + 4, 1).Value = data[i].SecondName;
-                        worksheet.Cell(i + 4, 2).Value = data[i].FirstName;
-                        worksheet.Cell(i + 4, 3).Value = data[i].ThirdName;
-                        worksheet.Cell(i + 4, 4).Value = data[i].HealthGroup;
-                        worksheet.Cell(i + 4, 5).Value = data[i].Pegroup;
+                        worksheet.Cell(i + 4, 1).Value = data[i].SecondName + " " + data[i].FirstName[0] + ". " + data[i].ThirdName[0] + ".";
+                        worksheet.Cell(i + 4, 2).Value = data[i].BirthDate.ToString("dd.MM.yyyy");
+                        worksheet.Cell(i + 4, 3).Value = data[i].HealthGroup;
+                        worksheet.Cell(i + 4, 4).Value = data[i].Pegroup;
+                        worksheet.Cell(i + 4, 5).Value = data[i].IssueDate.ToString("dd.MM.yyyy");
                         worksheet.Cell(i + 4, 6).Value = data[i].ValidDate.ToString("dd.MM.yyyy");
 
                     }
 
-                    worksheet.Column(1).Width = 20;
+                    worksheet.Column(1).Width = 26;
                     worksheet.Column(2).Width = 20;
                     worksheet.Column(3).Width = 20;
-                    worksheet.Column(4).Width = 18;
-                    worksheet.Column(5).Width = 24;
+                    worksheet.Column(4).Width = 23;
+                    worksheet.Column(5).Width = 19;
                     worksheet.Column(6).Width = 16;
 
                     workbook.SaveAs(filePath);

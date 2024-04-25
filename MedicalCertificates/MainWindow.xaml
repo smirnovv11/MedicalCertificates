@@ -104,10 +104,10 @@
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по отделениям" Click="AllReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по курсам" Click="DepartmentReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам" Click="CourseReport_Click"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группе" Click="GroupReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы" Click="GroupReport_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Отчет по группам здоровья для отделений" Click="AllDepReport_Click"/>
-                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Листок здоровья для группы" Click="HealthList_Click"/>
                             <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Изменившиеся группы здоровья" Click="ChangedHealthReport_Click"/>
+                            <MenuItem Style="{StaticResource PrimaryMenuItem}" Header="Приказ о группах по физической культуре " Click="HealthList_Click"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -201,7 +201,7 @@
                 <DataGrid Grid.Row="1" Margin="15 0 15 30" Name="dataGrid" Style="{StaticResource DataGridStyle}" FontSize="16" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="№" Binding="{Binding RowNum}" Width="0.13*" FontSize="14"/>
-                        <DataGridTextColumn Header="ФИО учащегося" Width="0.8*" FontSize="14">
+                        <DataGridTextColumn Header="ФИО учащегося" Width="0.6*" FontSize="14">
                             <DataGridTextColumn.Binding>
                                 <MultiBinding Converter="{StaticResource FullNameConverter}">
                                     <Binding Path="SecondName" />
@@ -210,10 +210,11 @@
                                 </MultiBinding>
                             </DataGridTextColumn.Binding>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="0.5*" FontSize="14"/>
-                        <DataGridTextColumn Header="Группа здоровья" Binding="{Binding HealthGroup}" Width="0.6*" FontSize="14"/>
-                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.6*" FontSize="14"/>
-                        <DataGridTextColumn Header="Справка годна" Width="0.5*" FontSize="14" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}">
+                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="0.4*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа здоровья" Binding="{Binding HealthGroup}" Width="0.4*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="Дата открытия" Binding="{Binding IssueDate, StringFormat=dd.MM.yyyy}" Width="0.4*" FontSize="14"/>
+                        <DataGridTextColumn Header="Справка годна" Width="0.4*" FontSize="14" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="Background" Value="{Binding ValidDate, Converter={StaticResource DateBackgroundConverter}}"/>
@@ -222,10 +223,10 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTemplateColumn Width="0.4*" Header="Примечание">
+                        <DataGridTemplateColumn Width="0.2*" Header="Прим.">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource NoteButton}" Name="ShowNote" Click="ShowNote_Click">Подробнее</Button>
+                                    <Button Style="{StaticResource NoteButton}" Name="ShowNote" Click="ShowNote_Click">...</Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

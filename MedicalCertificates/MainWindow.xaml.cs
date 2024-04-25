@@ -23,7 +23,7 @@ using System.IO;
 using MedicalCertificates.Views.Settings;
 using MedicalCertificates.Views.Report;
 using System.ComponentModel;
-
+using System.Diagnostics;
 
 namespace MedicalCertificates
 {
@@ -682,10 +682,11 @@ namespace MedicalCertificates
                 saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
                 saveFileDialog.Title = "Сохранить файл Excel";
 
+                string filePath = "";
                 var res = db.HealthGroupChangesViews.OrderByDescending(s => s.UpdateDate).ToList();
                 if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
                 {
-                    string filePath = saveFileDialog.FileName;
+                    filePath = saveFileDialog.FileName;
                     ChangeHealthReport.ExportToExcel(res, filePath, "Отчет по изменившимся группам здоровья");
                 }
                 else
@@ -693,6 +694,9 @@ namespace MedicalCertificates
 
                 var alert = new Alert("Успешно", "Отчет по изменившимся группам здоровья был успешно создан.");
                 alert.ShowDialog();
+
+                //Открываем файл в Excel
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -715,10 +719,11 @@ namespace MedicalCertificates
                 saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
                 saveFileDialog.Title = "Сохранить файл Excel";
 
+                string filePath = "";
                 var res = db.TotalReportViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsForReport_procedure").ToList();
                 if (saveFileDialog.ShowDialog() == true && !string.IsNullOrEmpty(saveFileDialog.FileName))
                 {
-                    string filePath = saveFileDialog.FileName;
+                    filePath = saveFileDialog.FileName;
                     AllDepartmentsReport.ExportToExcel(res, filePath, "Отчет по группам здоровья для отделений");
                 }
                 else
@@ -726,6 +731,9 @@ namespace MedicalCertificates
 
                 var alert = new Alert("Успешно", "Отчет по группам здоровья для отделений был успешно создан.");
                 alert.ShowDialog();
+
+                //Открываем файл в Excel
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -736,7 +744,7 @@ namespace MedicalCertificates
 
         private void HealthList_Click(object sender, RoutedEventArgs e)
         {
-            OpenReportSettings(ReportType.ShortGroup);
+            OpenReportSettings(ReportType.ShortGroupPE);
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)

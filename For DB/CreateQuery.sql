@@ -207,6 +207,20 @@ SELECT SecondName, FirstName, ThirdName, g.Name AS GroupName, CurrHealth, CurrPE
 	JOIN Groups_table AS g ON g.GroupId = Students_table.GroupId
 GO
 
+DROP VIEW IF EXISTS TotalReport_view
+GO
+CREATE VIEW TotalReport_view
+AS
+SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, h.HealthGroup, c.IssueDate, c.ValidDate, cr.Number AS Course, d.Name AS Department
+FROM Students_table AS s
+		JOIN Certificates_table as c ON c.StudentId = s.StudentId
+		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
+		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
+		JOIN Groups_table AS g ON g.GroupId = s.GroupId
+		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
+		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId
+GO
+
 
 
 --Процедуры
@@ -314,28 +328,13 @@ BEGIN
 END
 GO
 
-
-DROP VIEW IF EXISTS TotalReport_view
-GO
-CREATE VIEW TotalReport_view
-AS
-SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, s.FirstName, s.SecondName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, cr.Number AS Course, d.Name AS Department
-FROM Students_table AS s
-		JOIN Certificates_table as c ON c.StudentId = s.StudentId
-		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
-		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
-		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
-		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId
-GO
-
 DROP PROCEDURE IF EXISTS ReceiveStudentsForReport_procedure
 GO
 CREATE PROCEDURE ReceiveStudentsForReport_procedure
 AS
 BEGIN
 	WITH RankedCertificates AS (
-		SELECT s.SecondName, s.FirstName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, cr.Number AS Course, d.Name AS Department,
+		SELECT s.SecondName, s.FirstName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, h.HealthGroup, c.IssueDate, c.ValidDate, cr.Number AS Course, d.Name AS Department,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
 		FROM Students_table AS s
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
@@ -345,10 +344,10 @@ BEGIN
 		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
 		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId 
 	)
-	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, SecondName, FirstName, ThirdName, GroupName, PEGroup, Course, Department
+	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, SecondName, FirstName, ThirdName, GroupName, PEGroup, HealthGroup, IssueDate, ValidDate, Course, Department
 	FROM RankedCertificates
 	WHERE rn = 1
-	GROUP BY PEGroup, Department, Course, GroupName, SecondName, FirstName, ThirdName
+	GROUP BY PEGroup, HealthGroup, Department, Course, GroupName, SecondName, FirstName, ThirdName, IssueDate, ValidDate
 END
 GO
 
