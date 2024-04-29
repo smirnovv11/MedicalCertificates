@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using MedicalCertificates.Models;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,7 @@ namespace MedicalCertificates.Views.Report
                 }
 
                 rowIndex++;
+                int gridStartIndex = rowIndex;
                 foreach (var el in db.PegroupTables)
                 {
                     buffer = data.Where(d => d.Pegroup == el.Pegroup).ToList();
@@ -81,7 +83,7 @@ namespace MedicalCertificates.Views.Report
 
                     worksheet.Cell(rowIndex, 1).Value = "Медицинская группа: " + el.Pegroup;
                     worksheet.Range(rowIndex, 1, rowIndex, 8).Merge().Style
-                    .Font.SetBold().Font.SetItalic().Alignment.SetVertical(XLAlignmentVerticalValues.Center);
+                    .Font.SetBold().Font.SetItalic().Alignment.SetVertical(XLAlignmentVerticalValues.Center).Font.FontSize = 12;
                     worksheet.Row(rowIndex).Height = 22;
 
                     worksheet.Cell(++rowIndex, 1).Value = "ФИО Учащегося";
@@ -93,7 +95,7 @@ namespace MedicalCertificates.Views.Report
                     worksheet.Cell(rowIndex, 7).Value = "Справка открыта";
                     worksheet.Cell(rowIndex, 8).Value = "Группа годна";
 
-                    worksheet.Range(rowIndex, 1, rowIndex, 8).Style.Font.SetBold();
+                    worksheet.Range(rowIndex, 1, rowIndex, 8).Style.Font.SetBold().Font.FontSize = 12;
 
                     rowIndex++;
 
@@ -107,10 +109,18 @@ namespace MedicalCertificates.Views.Report
                         worksheet.Cell(rowIndex, 6).Value = buffer[i].HealthGroup;
                         worksheet.Cell(rowIndex, 7).Value = buffer[i].IssueDate.ToString("dd.MM.yyyy");
                         worksheet.Cell(rowIndex, 8).Value = buffer[i].ValidDate.ToString("dd.MM.yyyy");
+
+                        worksheet.Range(rowIndex, 1, rowIndex, 8).Style.Font.FontSize = 12;
+                        worksheet.Range(rowIndex, 1, rowIndex, 8).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Range(rowIndex, 1, rowIndex, 8).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
                     }
 
                     rowIndex++;
                 }
+
+                worksheet.Range(gridStartIndex, 1, rowIndex - 2, 8).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range(gridStartIndex, 1, rowIndex - 2, 8).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
                 worksheet.Column(1).Width = 25;
 
