@@ -38,6 +38,7 @@ namespace MedicalCertificates.Views.Create
 
                 autoCoursesCb.IsChecked = Boolean.Parse(JsonServices.ReadByProperty("autoCourses"));
                 isValid = new bool[2] { false, true };
+                nametb.Focus();
             }
             catch (Exception ex)
             {
@@ -122,7 +123,13 @@ namespace MedicalCertificates.Views.Create
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Добавление", $"Не удалось добавить отделение.\nОшибка: {ex.Message}.\nПовторите попытку.");
+                var alert = new Alert("Добавление", $"Не удалось добавить отделение.\nОшибка: {ex.Message}.\nПовторите попытку.", AlertType.Error);
+
+                if (ex.Message.Contains("UNIQUE"))
+                {
+                    alert.Message.Text = "Невозможно добавить дублированые данные. Введите другое название.";
+                }
+
                 alert.ShowDialog();
             }
         }

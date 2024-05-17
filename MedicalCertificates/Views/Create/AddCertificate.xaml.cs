@@ -21,11 +21,14 @@ namespace MedicalCertificates.Views.Create
     /// <summary>
     /// Логика взаимодействия для AddCertificate.xaml
     /// </summary>
+
+    // Класс окна для добавления новой справки
     public partial class AddCertificate : Window
     {
-        MedCertificatesDbContext db;
-        bool[] isValid;
+        MedCertificatesDbContext db; // Контекст базы данных
+        bool[] isValid; // Массив для проверки валидности данных
 
+        // Конструктор без параметров
         public AddCertificate()
         {
             try
@@ -33,6 +36,7 @@ namespace MedicalCertificates.Views.Create
                 InitializeComponent();
                 db = new MedCertificatesDbContext();
 
+                // Заполнение выпадающих списков данными из базы
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
 
@@ -43,7 +47,7 @@ namespace MedicalCertificates.Views.Create
                 PEGroupcb.DisplayMemberPath = "Pegroup";
 
                 isValid = new bool[7] { false, false, false, false, false, false, false };
-                
+
             }
             catch (Exception ex)
             {
@@ -51,8 +55,11 @@ namespace MedicalCertificates.Views.Create
                 alert.ShowDialog();
             }
         }
+
+        // Конструктор с параметром группы
         public AddCertificate(GroupsTable group) : this()
         {
+            // Установка активности элементов управления
             groupcb.IsEnabled = true;
             studentcb.IsEnabled = true;
 
@@ -66,8 +73,11 @@ namespace MedicalCertificates.Views.Create
             groupcb.SelectedIndex = groupcb.Items.IndexOf(currGroup);
             isValid[1] = true;
         }
+
+        // Конструктор с параметром студента
         public AddCertificate(StudentsTable student) : this()
         {
+            // Установка активности элементов управления
             groupcb.IsEnabled = true;
             studentcb.IsEnabled = true;
 
@@ -86,22 +96,26 @@ namespace MedicalCertificates.Views.Create
             isValid[2] = true;
         }
 
+        // Обработчик события нажатия мыши на окно для перемещения окна
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
+        // Обработчик события нажатия на кнопку выхода из окна
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        // Обработчик события нажатия на кнопку "Нет"
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        // Обработчик события изменения выбора в выпадающем списке департамента
         private void departmentcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (departmentcb.SelectedIndex != null && departmentcb.SelectedIndex >= 0)
@@ -115,6 +129,7 @@ namespace MedicalCertificates.Views.Create
                 groupcb.IsEnabled = false;
         }
 
+        // Обработчик события потери фокуса выпадающего списка департамента
         private void departmentcb_LostFocus(object sender, RoutedEventArgs e)
         {
             if (departmentcb.SelectedItem == null || departmentcb.SelectedIndex < 0)
@@ -129,6 +144,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события изменения выбора в выпадающем списке групп
         private void groupcb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (groupcb.SelectedIndex != null && groupcb.SelectedIndex >= 0)
@@ -143,6 +159,7 @@ namespace MedicalCertificates.Views.Create
                 studentcb.IsEnabled = false;
         }
 
+        // Обработчик события потери фокуса выпадающего списка групп
         private void groupcb_LostFocus(object sender, RoutedEventArgs e)
         {
             if (groupcb.SelectedItem == null || groupcb.SelectedIndex < 0)
@@ -157,6 +174,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события потери фокуса выпадающего списка студентов
         private void studentcb_LostFocus(object sender, RoutedEventArgs e)
         {
             if (studentcb.SelectedItem == null || studentcb.SelectedIndex < 0)
@@ -171,6 +189,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события потери фокуса выпадающего списка групп здоровья
         private void healthGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
             if (healthGroupcb.SelectedItem == null || healthGroupcb.SelectedIndex < 0)
@@ -185,6 +204,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события потери фокуса выпадающего списка групп физической подготовки
         private void PEGroupcb_LostFocus(object sender, RoutedEventArgs e)
         {
             if (PEGroupcb.SelectedItem == null || PEGroupcb.SelectedIndex < 0)
@@ -199,6 +219,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события потери фокуса поля выбора даты выдачи справки
         private void issueDatedp_LostFocus(object sender, RoutedEventArgs e)
         {
             if (issueDatedp.SelectedDate == null || validDatedp.SelectedDate > issueDatedp.SelectedDate)
@@ -213,6 +234,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события потери фокуса поля выбора даты окончания срока действия справки
         private void validDatedp_LostFocus(object sender, RoutedEventArgs e)
         {
             if (validDatedp.SelectedDate == null || validDatedp.SelectedDate <= issueDatedp.SelectedDate)
@@ -227,6 +249,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия на кнопку "Да" для добавления справки
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (var el in isValid)
@@ -251,6 +274,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Метод для добавления информации о студенте в базу данных
         private void AddStudentToDb()
         {
             var name = studentcb.SelectedItem.ToString().Split(' ');
@@ -264,6 +288,7 @@ namespace MedicalCertificates.Views.Create
             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCertificate_procedure @StudentId, @Health, @PE, @Issue, @Valid, @Note", studentId, healthId, peId, issueDate, validDate, note);
         }
 
+        // Обработчик события нажатия клавиши в окне
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -277,6 +302,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия на кнопку добавления нового отделения
         private void addDepartmentButton_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddDepartment();
@@ -287,6 +313,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия на кнопку добавления новой группы
         private void addGroupButton_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddGroup();
@@ -303,6 +330,7 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия на кнопку добавления нового студента
         private void addStudentButton_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddStudent();
@@ -320,12 +348,14 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия на кнопку очистки поля выбора даты окончания срока действия справки
         private void clearValidDateButton_Click(object sender, RoutedEventArgs e)
         {
             validDatedp.SelectedDate = null;
             isValid[6] = false;
         }
 
+        // Обработчик события нажатия на кнопку добавления года к дате выдачи справки
         private void addYear_Click(object sender, RoutedEventArgs e)
         {
             if (issueDatedp.SelectedDate != null)
@@ -337,6 +367,7 @@ namespace MedicalCertificates.Views.Create
             isValid[6] = true;
         }
 
+        // Обработчик события нажатия на кнопку добавления 6 месяцев к дате выдачи справки
         private void add6Month_Click(object sender, RoutedEventArgs e)
         {
             if (issueDatedp.SelectedDate != null)
@@ -348,6 +379,7 @@ namespace MedicalCertificates.Views.Create
             isValid[6] = true;
         }
 
+        // Обработчик события нажатия на кнопку добавления 3 месяцев к дате выдачи справки
         private void add3Month_Click(object sender, RoutedEventArgs e)
         {
             if (issueDatedp.SelectedDate != null)

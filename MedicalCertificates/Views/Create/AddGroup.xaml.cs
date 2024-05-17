@@ -72,7 +72,7 @@ namespace MedicalCertificates.Views.Create
                 departmentBox.BorderBrush = new SolidColorBrush(Colors.Gray);
 
                 coursecb.IsEnabled = true;
-                coursecb.ItemsSource = db.CoursesTables.Where(c => c.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).ToList();
+                coursecb.ItemsSource = db.CoursesTables.Where(c => c.DepartmentId == (departmentcb.SelectedItem as DepartmentsTable).DepartmentId).OrderBy(c => c.Number).ToList();
                 coursecb.DisplayMemberPath = "Number";
 
                 isValid[0] = true;

@@ -24,6 +24,7 @@ using MedicalCertificates.Views.Settings;
 using MedicalCertificates.Views.Report;
 using System.ComponentModel;
 using System.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MedicalCertificates
 {
@@ -537,9 +538,20 @@ namespace MedicalCertificates
 
                             var studentParam = new SqlParameter("@StudentId", studentId);
                             var healthId = new SqlParameter("@Health", 1);
-                            var peId = new SqlParameter("@PE", 1);
-                            var issueDate = new SqlParameter("@Issue", DateTime.Parse(worksheet.Cell(row, 5).GetValue<String>()));
-                            var validDate = new SqlParameter("@Valid", DateTime.Parse(worksheet.Cell(row, 6).GetValue<String>()));
+                            var peId = new SqlParameter("@PE", 6);
+
+                            var issueDate = new SqlParameter("@Issue", DateTime.Now);
+                            if (!string.IsNullOrEmpty(worksheet.Cell(row, 5).GetValue<String>()))
+                            {
+                                issueDate = new SqlParameter("@Issue", DateTime.Parse(worksheet.Cell(row, 5).GetValue<String>()));
+                            }
+                            
+                            var validDate = new SqlParameter("@Valid", DateTime.Now.AddYears(1));
+                            if (!string.IsNullOrEmpty(worksheet.Cell(row, 6).GetValue<String>()))
+                            {
+                                validDate = new SqlParameter("@Valid", DateTime.Parse(worksheet.Cell(row, 6).GetValue<String>()));
+                            }
+
                             var note = new SqlParameter("@Note", "");
 
                             db.Database.ExecuteSqlRaw("SET DATEFORMAT dmy; EXEC CreateCertificate_procedure @StudentId, @Health, @PE, @Issue, @Valid, @Note", studentParam, healthId, peId, issueDate, validDate, note);
@@ -557,7 +569,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex) 
             {
-                var alert = new Alert("Ошибка!", ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Не удалось импортировать данные из файла. Возможно данные повреждены или файл используется другой программой.", AlertType.Error);
                 alert.ShowDialog();
             }
         }

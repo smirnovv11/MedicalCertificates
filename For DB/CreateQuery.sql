@@ -100,7 +100,7 @@ CREATE TABLE PEGroup_table (
 GO
 
 INSERT INTO HealthGroup_table (HealthGroup) VALUES (N'1-группа'), (N'2-группа'), (N'3-группа'), (N'4-группа')
-INSERT INTO PEGroup_table(PEGroup) VALUES (N'Основная'), (N'Подготовительная'), (N'СМГ'), (N'ЛФК')
+INSERT INTO PEGroup_table(PEGroup) VALUES (N'Основная'), (N'Подготовительная'), (N'СМГ'), (N'ЛФК'), (N'Освобождение'), (N'Не указана')
 
 CREATE TABLE Certificates_table (
 	CertificateId INT PRIMARY KEY IDENTITY NOT NULL,

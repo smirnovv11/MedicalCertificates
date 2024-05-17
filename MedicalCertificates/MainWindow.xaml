@@ -36,6 +36,7 @@
         <services:AppendText x:Key="AppendText"/>
         <services:DateBackgroundConverter x:Key="DateBackgroundConverter"/>
         <services:DateForegroundConverter x:Key="DateForegroundConverter"/>
+        <services:PEGroupConverter x:Key="PEGroupConverter"/>
     </Window.Resources>
 
     <Grid Background="#ebf0f3">
@@ -212,7 +213,13 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="0.4*" FontSize="14"/>
                         <DataGridTextColumn Header="Группа здоровья" Binding="{Binding HealthGroup}" Width="0.4*" FontSize="14"/>
-                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.5*" FontSize="14"/>
+                        <DataGridTextColumn Header="Группа по физкультуре" Binding="{Binding Pegroup}" Width="0.5*" FontSize="14">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Background" Value="{Binding Pegroup, Converter={StaticResource PEGroupConverter}}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="Дата открытия" Binding="{Binding IssueDate, StringFormat=dd.MM.yyyy}" Width="0.4*" FontSize="14"/>
                         <DataGridTextColumn Header="Справка годна" Width="0.4*" FontSize="14" Binding="{Binding ValidDate, StringFormat=dd.MM.yyyy}">
                             <DataGridTextColumn.ElementStyle>

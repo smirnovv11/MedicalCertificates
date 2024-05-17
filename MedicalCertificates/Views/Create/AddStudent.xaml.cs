@@ -25,9 +25,10 @@ namespace MedicalCertificates.Views.Create
     /// </summary>
     public partial class AddStudent : Window
     {
-        MedCertificatesDbContext db;
-        bool[] isValid;
+        MedCertificatesDbContext db; // Контекст базы данных
+        bool[] isValid; // Массив для проверки валидности данных
 
+        // Конструктор без параметров
         public AddStudent()
         {
             try
@@ -35,8 +36,10 @@ namespace MedicalCertificates.Views.Create
                 InitializeComponent();
                 db = new MedCertificatesDbContext();
 
+                // Заполнение выпадающих списков данными из базы
                 departmentcb.ItemsSource = db.DepartmentsTables.ToList();
                 departmentcb.DisplayMemberPath = "Name";
+                secondNametb1.Focus();
 
                 isValid = new bool[6] { false, false, true, false, false, false };
             }
@@ -47,17 +50,20 @@ namespace MedicalCertificates.Views.Create
             }
         }
 
+        // Обработчик события нажатия мыши на окно для перемещения окна
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
+        // Обработчик события нажатия на кнопку выхода из окна
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
+        // Обработчик события нажатия на кнопку "Нет"
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
