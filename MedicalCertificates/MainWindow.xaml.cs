@@ -182,7 +182,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Не удалось обновить данные базы данных. Повторите попытку или восстановите базу данных." + ex.Message, AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -266,7 +266,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка отоброжения подробностей. Повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -286,7 +286,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка отображения группы. Повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -306,7 +306,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка отображения истории студента. Повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -611,7 +611,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка поиска. Повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -649,7 +649,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Не удалось отобразить результаты поиска. Повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
@@ -712,7 +712,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                var alert = new Alert("Ошибка!", "Не удалось посторить отчет. Повторите попытку.");
                 alert.ShowDialog();
             }
         }
@@ -749,7 +749,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message);
+                var alert = new Alert("Ошибка!", "Ошибка!\", \"Не удалось посторить отчет. Повторите попытку.");
                 alert.ShowDialog();
             }
         }
@@ -773,7 +773,7 @@ namespace MedicalCertificates
             }
             catch (Exception ex)
             {
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Файл справки отсутствует или поврежден. Восстановите данные программы и повторите попытку.", AlertType.Error);
                 alert.ShowDialog();
             }
         }
