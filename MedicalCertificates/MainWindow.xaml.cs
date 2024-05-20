@@ -25,6 +25,7 @@ using MedicalCertificates.Views.Report;
 using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
+using System.Threading.Tasks;
 
 namespace MedicalCertificates
 {
@@ -323,19 +324,19 @@ namespace MedicalCertificates
         {
             var wind = new AddDepartment();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData(true);
+                UpdateTreeData(true);
         }
         private void CourseAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddCourse();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData(true);
+                UpdateTreeData(true);
         }
         private void GroupAddition_Click(object sender, RoutedEventArgs e)
         {
             var wind = new AddGroup();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData(true);
+                UpdateTreeData(true);
         }
         private void CertificateAddition_Click(object sender, RoutedEventArgs e)
         {
@@ -426,14 +427,14 @@ namespace MedicalCertificates
         {
             var wind = new UpdateDepartment();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData(true);
+                UpdateTreeData(true);
         }
 
         private void UpdateCourse_Click(object sender, RoutedEventArgs e)
         {
             var wind = new UpdateCourse();
             if (wind.ShowDialog() == true)
-                UpdateAllDbData(true);
+                UpdateTreeData(true);
         }
 
         private void UpdateGroup_Click(object sender, RoutedEventArgs e)
@@ -591,11 +592,12 @@ namespace MedicalCertificates
                     ContextMenu contextMenu = searchBox.ContextMenu;
                     contextMenu.PlacementTarget = searchBox as UIElement;
                     contextMenu.Placement = PlacementMode.Bottom;
-                    contextMenu.IsOpen = true;
                     contextMenu.Items.Clear();
 
-                    var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.ToLower().Contains(searchBox.Text.ToLower())).ToList().
-                        Concat(groups.Select(g => g.Name).Where(g => g.ToLower().Contains(searchBox.Text.ToLower())).ToList()).ToList();
+                    var res = students.Select(g => g.SecondName + " " + g.FirstName.Substring(0, 1) + ". " + g.ThirdName.Substring(0, 1) + ".").Where(s => s.ToLower().Contains(searchBox.Text.ToLower())).ToList()
+                        .Concat(groups.Select(g => g.Name).Where(g => g.ToLower().Contains(searchBox.Text.ToLower())).ToList())
+                        .Concat(db.PegroupTables.Select(p => p.Pegroup).Where(p => p.ToLower().Contains(searchBox.Text.ToLower())).ToList())
+                        .ToList();
 
                     foreach (string el in res)
                     {
@@ -607,6 +609,8 @@ namespace MedicalCertificates
 
                         item.Click += OpenSearchResult;
                     }
+
+                    contextMenu.IsOpen = true;
                 }
             }
             catch (Exception ex)
@@ -620,8 +624,9 @@ namespace MedicalCertificates
         {
             try
             {
-                string[] arr = (sender as MenuItem).Header.ToString().Split(' ');
-                if (arr.Length > 1)
+                var header = (sender as MenuItem).Header.ToString();
+                string[] arr = header.Split(' ');
+                if (arr.Length == 3)
                 {
                     var student = db.StudentsTables.FirstOrDefault(s => s.SecondName == arr[0]
                     && s.FirstName.StartsWith(arr[1].Substring(0, 1)) && s.ThirdName.StartsWith(arr[2].Substring(0, 1)));
@@ -633,16 +638,29 @@ namespace MedicalCertificates
 
                     TableLabel.Text = $"Листок здоровья учащегося ({student.SecondName + " " + student.FirstName + " " + student.ThirdName})";
                 }
-                else
+                else 
                 {
-                    var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
-                    currGroupId = group.GroupId;
-                    lastGroupId = currGroupId;
-                    currStudentId = -1;
+                    if (db.PegroupTables.FirstOrDefault(p => p.Pegroup == header) != null)
+                    {
+                        var PEgroup = db.PegroupTables.FirstOrDefault(p => p.Pegroup == header);
 
-                    UpdateGridData();
+                        db = new MedCertificatesDbContext();
+                        var res = db.DataGridViews.Where(d => d.Pegroup == PEgroup.Pegroup).ToList();
+                        dataGrid.ItemsSource = res;
 
-                    TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId).Number} курс)";
+                        TableLabel.Text = $"Результаты поиска по группе '{header}'";
+                    }
+                    else
+                    {
+                        var group = db.GroupsTables.FirstOrDefault(g => g.Name == arr[0]);
+                        currGroupId = group.GroupId;
+                        lastGroupId = currGroupId;
+                        currStudentId = -1;
+
+                        UpdateGridData();
+
+                        TableLabel.Text = $"Листок здоровья группы {group.Name} ({db.CoursesTables.FirstOrDefault(c => c.CourseId == group.CourseId).Number} курс)";
+                    }
                 }
                 searchBox.Clear();
                 dataGrid.Focus();
