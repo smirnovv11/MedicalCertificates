@@ -538,7 +538,7 @@ namespace MedicalCertificates
                             var studentId = db.StudentsTables.OrderByDescending(s => s.StudentId).First().StudentId;
 
                             var studentParam = new SqlParameter("@StudentId", studentId);
-                            var healthId = new SqlParameter("@Health", 1);
+                            var healthId = new SqlParameter("@Health", 5);
                             var peId = new SqlParameter("@PE", 6);
 
                             var issueDate = new SqlParameter("@Issue", DateTime.Now);

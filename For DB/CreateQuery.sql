@@ -46,14 +46,14 @@ GO
 CREATE TABLE Departments_table (
 	DepartmentId INT PRIMARY KEY IDENTITY NOT NULL,
 	Name NVARCHAR(100) UNIQUE NOT NULL,
-	MaxCourse INT DEFAULT '3' NOT NULL
+	MaxCourse TINYINT DEFAULT '3' NOT NULL
 )
 GO
 
 CREATE TABLE Courses_table (
 	CourseId INT PRIMARY KEY IDENTITY NOT NULL,
 	DepartmentId INT NOT NULL,
-	Number INT DEFAULT '1' NOT NULL,
+	Number TINYINT DEFAULT '1' NOT NULL,
 	CONSTRAINT FK_Department FOREIGN KEY (DepartmentId) REFERENCES Departments_table(DepartmentId)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
@@ -99,7 +99,7 @@ CREATE TABLE PEGroup_table (
 )
 GO
 
-INSERT INTO HealthGroup_table (HealthGroup) VALUES (N'1-группа'), (N'2-группа'), (N'3-группа'), (N'4-группа')
+INSERT INTO HealthGroup_table (HealthGroup) VALUES (N'1-группа'), (N'2-группа'), (N'3-группа'), (N'4-группа'), (N'Не указана')
 INSERT INTO PEGroup_table(PEGroup) VALUES (N'Основная'), (N'Подготовительная'), (N'СМГ'), (N'ЛФК'), (N'Освобождение'), (N'Не указана')
 
 CREATE TABLE Certificates_table (
@@ -568,22 +568,22 @@ INSERT INTO Certificates_table(StudentId, HealthGroupId, PEGroupId, IssueDate, V
 VALUES
 (1, 1, 1, '12-12-2023', '12-12-2024'),
 (2, 1, 1, '13-12-2023', '13-12-2024'),
-(3, 1, 1, '14-12-2023', '14-12-2024'),
-(4, 1, 1, '15-12-2023', '15-12-2024'),
+(3, 1, 1, '14-12-2023', '14-06-2024'),
+(4, 1, 1, '15-12-2023', '15-03-2024'),
 (5, 1, 1, '16-12-2023', '16-12-2024'),
 (6, 1, 1, '17-12-2023', '17-12-2024'),
-(7, 1, 1, '18-12-2023', '18-12-2024'),
-(8, 1, 1, '19-12-2023', '19-12-2024'),
+(7, 1, 1, '18-12-2023', '18-10-2024'),
+(8, 1, 1, '19-12-2023', '19-11-2024'),
 (9, 1, 1, '20-12-2023', '20-12-2024'),
 (10, 1, 1, '21-12-2023', '21-12-2024'),
 (11, 1, 1, '22-12-2023', '22-12-2024'),
 (12, 1, 1, '23-12-2023', '23-12-2024'),
-(13, 1, 1, '24-12-2023', '24-12-2024'),
-(14, 1, 1, '25-12-2023', '25-12-2024'),
-(15, 1, 1, '26-12-2023', '26-12-2024'),
-(16, 1, 1, '27-12-2023', '27-12-2024'),
-(17, 1, 1, '28-12-2023', '28-12-2024'),
-(18, 1, 1, '29-12-2023', '29-12-2024'),
+(13, 1, 1, '24-12-2023', '24-05-2024'),
+(14, 1, 1, '25-12-2023', '25-10-2024'),
+(15, 1, 1, '26-12-2023', '26-11-2024'),
+(16, 1, 1, '27-12-2023', '27-08-2024'),
+(17, 1, 1, '28-12-2023', '28-06-2024'),
+(18, 1, 1, '29-12-2023', '29-07-2024'),
 (19, 1, 1, '30-12-2023', '30-12-2024'),
-(20, 1, 1, '31-12-2023', '31-12-2024');
+(20, 1, 1, '31-12-2023', '31-03-2024');
 

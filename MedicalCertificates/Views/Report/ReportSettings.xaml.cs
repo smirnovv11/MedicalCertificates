@@ -216,7 +216,7 @@ namespace MedicalCertificates.Views.Report
                 filePath = saveFileDialog.FileName;
                 if (type == ReportType.ShortGroupPE)
                 {
-                    title = $"Листок здоровья группы {(groupcb.SelectedItem as GroupsTable).Name}";
+                    title = $"Приказ о группах по физкультуре {(groupcb.SelectedItem as GroupsTable).Name}";
                     ExportToExcelShort(res, filePath, title);
                 }
                 else
