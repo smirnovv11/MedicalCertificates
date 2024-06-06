@@ -21,12 +21,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1618F19381BA4B75A6F1C95A0C47EF32"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3DE166475BF7470F80F324CF31CE7462"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -39,7 +33,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C51A0D02551A40F195DCDEAE6AA4071B"
+        "MsmKey" = "8:_DD362213A0514616B921BD13FC8A29F4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EBE3865CE7514CDC94B90AD791648C87"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -122,10 +122,20 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    "Name" = "8:Среда выполнения .NET для классических приложений 6.0.13 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.SqlServer.SqlLocalDB.15.0"
+                    {
+                    "Name" = "8:SQL Server 2019 Express LocalDB"
+                    "ProductCode" = "8:Microsoft.SqlServer.SqlLocalDB.15.0"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.14.0.x64"
+                    {
+                    "Name" = "8:Visual C++ \"14\" Runtime Libraries (x64)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.14.0.x64"
                     }
                 }
             }
@@ -146,6 +156,14 @@
         {
             "LaunchCondition"
             {
+                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_1FD5169C83874B5FB1DEEBEED67C7103"
+                {
+                "Name" = "8:.NET Framework"
+                "Message" = "8:[VSDNETMSG]"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.7.2"
+                "AllowLaterVersions" = "11:FALSE"
+                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=863262"
+                }
                 "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_BE158C001CA240258310FABD30166BEB"
                 {
                 "Name" = "8:.NET Core"
@@ -164,26 +182,6 @@
             {
             "SourcePath" = "8:..\\MedicalCertificates\\bin\\Debug\\net6.0-windows\\CreateQuery.sql"
             "TargetName" = "8:CreateQuery.sql"
-            "Tag" = "8:"
-            "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:TRUE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1618F19381BA4B75A6F1C95A0C47EF32"
-            {
-            "SourcePath" = "8:..\\MedicalCertificates\\bin\\Debug\\net6.0-windows\\MedicalCertificates.deps.json"
-            "TargetName" = "8:MedicalCertificates.deps.json"
             "Tag" = "8:"
             "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
             "Condition" = "8:"
@@ -224,6 +222,26 @@
             {
             "SourcePath" = "8:..\\MedicalCertificates\\bin\\Debug\\net6.0-windows\\Help.chm"
             "TargetName" = "8:Help.chm"
+            "Tag" = "8:"
+            "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD362213A0514616B921BD13FC8A29F4"
+            {
+            "SourcePath" = "8:..\\MedicalCertificates\\bin\\Release\\net6.0-windows\\MedicalCertificates.deps.json"
+            "TargetName" = "8:MedicalCertificates.deps.json"
             "Tag" = "8:"
             "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
             "Condition" = "8:"
@@ -297,7 +315,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MEDICAL CERTIFICATES"
         "ProductCode" = "8:{0573AC2C-6574-4F3A-8AC8-137EA118123D}"
-        "PackageCode" = "8:{CB68CA00-1555-4A35-9BCB-59B9FD7D31DB}"
+        "PackageCode" = "8:{D3FCF014-87E3-423D-AE6F-BE06B88D151A}"
         "UpgradeCode" = "8:{6384E691-77C6-44ED-8A28-44CE6E23052F}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -417,7 +435,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_CC338A2D853E4C12A27706E72D482064"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A9817782BA1A41E08108CD3AB75B611E"
             {
             "Name" = "8:MEDICAL CERTIFICATES"
             "Arguments" = "8:"
@@ -425,7 +443,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_C51A0D02551A40F195DCDEAE6AA4071B"
+            "Target" = "8:_EBE3865CE7514CDC94B90AD791648C87"
             "Folder" = "8:_F541BF3F53584B65AB3A280457F819CB"
             "WorkingFolder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
             "Icon" = "8:_3DE166475BF7470F80F324CF31CE7462"
@@ -830,9 +848,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C51A0D02551A40F195DCDEAE6AA4071B"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EBE3865CE7514CDC94B90AD791648C87"
             {
-            "SourcePath" = "8:..\\MedicalCertificates\\obj\\Debug\\net6.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\MedicalCertificates\\obj\\Release\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_51AC0DF8D0F742BD9CF7EFC06B46018D"
