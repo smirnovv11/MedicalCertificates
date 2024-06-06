@@ -130,7 +130,7 @@ namespace MedicalCertificates.Views.Report
                 worksheet.Column(3).Width = 16;
                 worksheet.Column(3).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
 
-                worksheet.Column(4).Width = 24;
+                worksheet.Column(4).Width = 50;
                 worksheet.Column(4).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
 
                 worksheet.Column(5).Width = 24;

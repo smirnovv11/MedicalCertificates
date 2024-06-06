@@ -138,7 +138,7 @@ namespace MedicalCertificates.Views.Settings
             catch (Exception ex)
             {
                 progressBar.Visibility = Visibility.Hidden;
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка: не удалось создать резервную копию");
                 alert.ShowDialog();
             }
         }
@@ -212,7 +212,7 @@ namespace MedicalCertificates.Views.Settings
             catch (Exception ex)
             {
                 progressBar.Visibility = Visibility.Hidden;
-                var alert = new Alert("Ошибка!", "Ошибка: " + ex.Message, AlertType.Error);
+                var alert = new Alert("Ошибка!", "Ошибка восстановления базы данных.");
                 alert.ShowDialog();
             }
         }
@@ -261,6 +261,27 @@ namespace MedicalCertificates.Views.Settings
                     cmd.ExecuteNonQuery();
                 }
                 progress.Report(100);
+            }
+        }
+
+        private void RebuildDataBase_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var askAlert = new AcceptAlert("Внимание", "Пересоздание базы данных удалит все текущие данные. Вы желаете продолжить?", AlertType.Warning);
+                if (askAlert.ShowDialog() == true)
+                {
+                    EnsureCreateDb.Create();
+                }
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                progressBar.Visibility = Visibility.Hidden;
+                var alert = new Alert("Ошибка!", "Ошибка: не удалось пересоздать базу данных. Возможно файл создания поврежден.");
+                alert.ShowDialog();
             }
         }
     }

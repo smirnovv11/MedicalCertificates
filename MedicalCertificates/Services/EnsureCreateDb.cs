@@ -51,7 +51,7 @@ namespace MedicalCertificates.Services
                 Server server = new Server(new ServerConnection(conn));
                 server.ConnectionContext.ExecuteNonQuery(script);
 
-                Thread.Sleep(10000);
+                Thread.Sleep(3000);
                 return false;
             }
         }
