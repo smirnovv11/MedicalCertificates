@@ -340,13 +340,13 @@ BEGIN
 	WITH RankedCertificates AS (
 		SELECT s.SecondName, s.FirstName, s.ThirdName, g.Name AS GroupName, pe.PEGroup, h.HealthGroup, c.IssueDate, c.ValidDate, cr.Number AS Course, d.Name AS Department,
 			   ROW_NUMBER() OVER(PARTITION BY s.StudentId ORDER BY c.ValidDate DESC) as rn
-		FROM Students_table AS s
+		FROM Departments_table AS d
+		JOIN Courses_table AS cr ON cr.DepartmentId = d.DepartmentId
+		JOIN Groups_table AS g ON g.CourseId = cr.CourseId
+		JOIN Students_table AS s ON s.GroupId = g.GroupId
 		JOIN Certificates_table as c ON c.StudentId = s.StudentId
 		JOIN HealthGroup_table AS h ON h.HealthGroupId = c.HealthGroupId
 		JOIN PEGroup_table AS pe ON pe.PEGroupId = c.PEGroupId
-		JOIN Groups_table AS g ON g.GroupId = s.GroupId
-		JOIN Courses_table AS cr ON cr.CourseId = g.CourseId
-		JOIN Departments_table AS d ON d.DepartmentId = cr.CourseId 
 	)
 	SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RowNum, SecondName, FirstName, ThirdName, GroupName, PEGroup, HealthGroup, IssueDate, ValidDate, Course, Department
 	FROM RankedCertificates

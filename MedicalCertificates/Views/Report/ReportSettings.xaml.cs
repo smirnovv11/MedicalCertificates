@@ -181,6 +181,7 @@ namespace MedicalCertificates.Views.Report
             {
                 case ReportType.Department:
                     title = $"Отчет по отделению {(departmentcb.SelectedItem as DepartmentsTable).Name}";
+                    res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsDepartment_procedure {(departmentcb.SelectedItem as DepartmentsTable).DepartmentId}").ToList();
                     break;
                 case ReportType.Course:
                     title = $"Отчет по курсу {(courseCb.SelectedItem as CoursesTable).Number}, отделение {(departmentcb.SelectedItem as DepartmentsTable).Name}";
@@ -188,7 +189,7 @@ namespace MedicalCertificates.Views.Report
                     break;
                 case ReportType.ShortGroupPE:
                 case ReportType.Group:
-                    title = $"Отчет по группе {(groupcb.SelectedItem as GroupsTable).Name}";
+                    title = $"Листок здоровья группы {(groupcb.SelectedItem as GroupsTable).Name}";
                     res = db.DataGridViews.FromSqlRaw($"SET DATEFORMAT dmy; EXEC ReceiveStudentsGroup_procedure {(groupcb.SelectedItem as GroupsTable).GroupId}").ToList();
                     break;
             }
